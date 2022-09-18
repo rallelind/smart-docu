@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     // Path to PDF file within bucket
     const fileName = 'CV - Toucans.pdf';
     // The folder to store the results
-    const outputPrefix = 'results'
+    const outputPrefix = 'testing'
     
     const gcsSourceUri = `gs://${bucketName}/${fileName}`;
     const gcsDestinationUri = `gs://${bucketName}/${outputPrefix}/`;
@@ -52,12 +52,10 @@ export default async function handler(req, res) {
     
     const [operation] = await client.asyncBatchAnnotateFiles(request);
     const [filesResponse] = await operation.promise();
-    const destinationUri =
-      filesResponse.responses[0].outputConfig.gcsDestination.uri;
-    console.log('Json saved to: ' + destinationUri);
-    res.json({message: "success"})
+    const destinationUri = filesResponse.responses[0].outputConfig.gcsDestination.uri;
+    res.status(200).json({message: `Json saved to: ${destinationUri}`})
   } catch(error) {
-    res.json({message: "error"})
+    res.status(500).json({message: "error processing the file"})
     throw error
   }
 }

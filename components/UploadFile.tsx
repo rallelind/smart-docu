@@ -1,9 +1,15 @@
 import React, { useState } from "react"
+import { BiCheckbox, BiCheckboxChecked } from "react-icons/bi"
+import ToastLoader from "./toasters/ToastLoader";
+import ToastSuccess from "./toasters/ToastSuccess";
+import ToastError from "./toasters/ToastError";
 
 const UploadFile = () => {
 
     const [isFilePicked, setIsFilePicked] = useState(false);
-    const [uploadedFileUrl, setUploadedFileUrl] = useState("")
+    const [uploadedFileUrls, setUploadedFileUrls] = useState([])
+    const [pickedFile, setPickedFile] = useState("")
+    const [toaster, setToaster] = useState(<></>)
 
     const changeHandler = async (event) => {
         const file = event.target.files[0];
@@ -11,22 +17,35 @@ const UploadFile = () => {
         const res = await fetch(`/api/upload-pdf?file=${filename}`);
         const { url, fields } = await res.json();
         const formData = new FormData();
-    
+
+        setToaster(<ToastLoader onClose={() => setToaster(<></>)} />)
+
         Object.entries({ ...fields, file }).forEach(([key, value]) => {
-          formData.append(key, value as any);
+          formData.append(key, value as string);
         });
     
         const upload = await fetch(url, {
           method: 'POST',
           body: formData,
         });
+
     
         if (upload.ok) {
             setIsFilePicked(true)
-            setUploadedFileUrl(`${url}${file.name}`)
+            setUploadedFileUrls([...uploadedFileUrls, `${url}${file.name}`])
+            setToaster(<ToastSuccess onClose={() => setToaster(<></>)} />)
         } else {
           console.error('Upload failed.');
+          setToaster(<ToastError onClose={() => setToaster(<></>)} />)
         }
+    };
+    
+    const pickedFileToGenerateDocument = (url: string) => {
+        if(pickedFile.length < 1 || url !== pickedFile) {
+            setPickedFile(url);
+        } else {
+            setPickedFile("");
+        };
     };
 
     const onSubmitPDFDocument = async () => {
@@ -57,11 +76,23 @@ const UploadFile = () => {
                 and building of the new document from the pdf may take some time, so please have patience. 
                 Afterwards, navigate to documents in the side bar to see your uploaded documents.
             </p>
-            <p>
-                {uploadedFileUrl}
-            </p>
+            <div className="mt-10">
+                <ul>
+                    {uploadedFileUrls.map((uploadedFileUrl) => (
+                        <li 
+                            onClick={() => pickedFileToGenerateDocument(uploadedFileUrl)}
+                            className={`cursor-pointer flex items-center mt-5 p-2 rounded-lg ${uploadedFileUrl === pickedFile ? "bg-green-200" : "bg-gray-50"} ${uploadedFileUrl !== pickedFile && "hover:bg-gray-100"}`}>
+                            <p className={`w-full font-medium ${uploadedFileUrl === pickedFile ? "text-black" : "text-gray-600"} underline`}>{uploadedFileUrl}</p>
+                            {uploadedFileUrl === pickedFile ? <BiCheckboxChecked size={30} /> : <BiCheckbox size={30} />}
+                        </li>
+                    ))}
+                </ul>
+            </div>
             <div className="mt-10 flex justify-center">
-                <button onClick={onSubmitPDFDocument} disabled={!isFilePicked} type="button" className={`text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 ${!isFilePicked && "cursor-not-allowed"}`}>{isFilePicked ? "Generate document" : "Pick a pdf file"}</button>
+                {uploadedFileUrls.length > 0 && <button onClick={onSubmitPDFDocument} disabled={!isFilePicked} type="button" className={`text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 ${pickedFile.length < 1 && "cursor-not-allowed"}`}>{pickedFile.length > 1 ? "Generate document" : "Pick a pdf file"}</button>}
+                <div className="absolute bottom-0">
+                    {toaster}
+                </div>
             </div>
         </div>
     )
