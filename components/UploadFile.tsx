@@ -90,7 +90,7 @@ const UploadFile = () => {
             </div>
             <div className="mt-10 flex justify-center">
                 {uploadedFileUrls.length > 0 && <button onClick={onSubmitPDFDocument} disabled={!isFilePicked} type="button" className={`text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 ${pickedFile.length < 1 && "cursor-not-allowed"}`}>{pickedFile.length > 1 ? "Generate document" : "Pick a pdf file"}</button>}
-                <div className="absolute bottom-0">
+                <div className="fixed bottom-0">
                     {toaster}
                 </div>
             </div>
