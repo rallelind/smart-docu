@@ -48,8 +48,51 @@ const UploadFile = () => {
         };
     };
 
+    const randomId = (): string => {
+        const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0];
+        return uint32.toString(16);
+      }
+
     const onSubmitPDFDocument = async () => {
 
+        const { pathname } = new URL(pickedFile);
+
+        const paths = pathname.split("/")
+
+        const fileName = paths[paths.length - 1].replace(/%20/g, " ")
+
+        setToaster(<ToastLoader onClose={() => setToaster(<></>)} />)
+
+        const folderName = randomId()
+
+        const body = {
+            fileName: fileName,
+            folderName: folderName,
+        }
+
+        console.log(fileName)
+
+        try {
+            await fetch("/api/pdf", {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify(body)
+            })
+        } catch(error) {
+            setToaster(<ToastError onClose={() => setToaster(<></>)} />)
+        } finally {
+            await fetch("/api/pdf-data", {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify(body)
+            })
+        }
     }
 
 
