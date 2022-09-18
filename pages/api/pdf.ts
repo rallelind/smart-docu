@@ -10,7 +10,6 @@ export default async function handler(req, res) {
 
   // Performs label detection on the image file
   try {
-    const vision = require('@google-cloud/vision').v1;
 
     // Creates a client
     
@@ -21,7 +20,7 @@ export default async function handler(req, res) {
     // Bucket where the file resides
     const bucketName = 'pdf-storage-smart-docu';
     // Path to PDF file within bucket
-    const fileName = 'Inklusionens-pædagogik1.pdf';
+    const fileName = 'CV - Toucans.pdf';
     // The folder to store the results
     const outputPrefix = 'results'
     
