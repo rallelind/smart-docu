@@ -1,13 +1,13 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { BiCheckbox, BiCheckboxChecked } from "react-icons/bi"
 import ToastLoader from "./toasters/ToastLoader";
 import ToastSuccess from "./toasters/ToastSuccess";
 import ToastError from "./toasters/ToastError";
 
-const UploadFile = () => {
+const UploadFile = ({ drafts }) => {
 
     const [isFilePicked, setIsFilePicked] = useState(false);
-    const [uploadedFileUrls, setUploadedFileUrls] = useState([])
+    const [uploadedFileUrls, setUploadedFileUrls] = useState(drafts)
     const [pickedFile, setPickedFile] = useState("")
     const [toaster, setToaster] = useState(<></>)
 
@@ -59,14 +59,15 @@ const UploadFile = () => {
 
         const paths = pathname.split("/")
 
-        const fileName = paths[paths.length - 1].replace(/%20/g, " ")
+        const fileName = paths[paths.length - 1]
 
         setToaster(<ToastLoader onClose={() => setToaster(<></>)} />)
 
         const folderName = randomId()
+        
 
         const body = {
-            fileName: fileName,
+            fileName: decodeURIComponent(fileName),
             folderName: folderName,
         }
 
@@ -83,16 +84,7 @@ const UploadFile = () => {
             })
         } catch(error) {
             setToaster(<ToastError onClose={() => setToaster(<></>)} />)
-        } finally {
-            await fetch("/api/pdf-data", {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: "POST",
-                body: JSON.stringify(body)
-            })
-        }
+        } 
     }
 
 

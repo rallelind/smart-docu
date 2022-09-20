@@ -1,5 +1,7 @@
 
 import { Storage } from '@google-cloud/storage';
+import prisma from '../../lib/prisma';
+import { getSession } from 'next-auth/react';
 
 
 export default async function handler(req, res) {
@@ -10,15 +12,15 @@ export default async function handler(req, res) {
     
     const bucketName = 'pdf-storage-smart-docu';
 
-      const bucket = storage.bucket(bucketName);
+    const bucket = storage.bucket(bucketName);
 
-      const responseHeader = 'Content-Type';
+    const responseHeader = 'Content-Type';
 
-      const origin = "http://localhost:3000";
+    const origin = "http://localhost:3000";
 
-      const method = 'POST'
+    const method = 'POST'
 
-      const maxAgeSeconds = Date.now() + 1 * 60 * 1000
+    const maxAgeSeconds = Date.now() + 1 * 60 * 1000
 
     await bucket.setCorsConfiguration([
         {
@@ -28,19 +30,24 @@ export default async function handler(req, res) {
         },
     ])
 
+    const session = await getSession({ req })
 
+    const file = bucket.file(`${session.user.email}/${req.query.file}`);
 
-      const file = bucket.file(req.query.file);
-      const options = {
-        expires: maxAgeSeconds, //  1 minute,
-        fields: { 'x-goog-meta-test': 'data' },
-        public: true,
-      };
+    const options = {
+      expires: maxAgeSeconds, //  1 minute,
+      fields: { 'x-goog-meta-test': 'data' },
+    };
 
+    const [response] = await file.generateSignedPostPolicyV4(options);
 
-    
-      const [response] = await file.generateSignedPostPolicyV4(options);
+    await prisma.document.create({
+      data: {
+        author: { connect: { email: session.user.email } },
+        title: req.query.file,
+        pdfLink: `${response.url}${response.fields.key}`,
+      }
+    })
         
-      console.log(response)
-        res.status(200).json(response);
+    res.status(200).json(response);
 }

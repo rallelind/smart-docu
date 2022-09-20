@@ -57,18 +57,19 @@ model VerificationToken {
 }
 
 model Document {
-  id       String  @id @default(cuid())
-  title    String
+  id       String  @default(cuid())
+  title    String  @id @unique
+  draft    Boolean @default(true)
+  pdfLink  String 
   content  Content[]
   author   User?   @relation(fields: [authorId], references: [id])
   authorId String?
-  pageId String?
 }
 
 model Content {
   id   String   @id @default(cuid())
   documentId String
-  document Document @relation(fields: [documentId], references: [id])
+  document Document @relation(fields: [documentId], references: [title])
   text String
   page Int
 }
