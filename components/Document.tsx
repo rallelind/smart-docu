@@ -1,5 +1,6 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { BsFillArrowRightCircleFill, BsFillArrowLeftCircleFill } from "react-icons/bs"
+import { useRouter } from "next/router"
 
 type Document = {
     document: [{
@@ -9,7 +10,14 @@ type Document = {
 }
 
 const Document: React.FC<Document> = ({ document }) => {
-    const [page, setPage] = useState(1)
+
+    const router = useRouter()
+
+    const [page, setPage] = useState(Number(router.query.page))
+
+    useEffect(() => {
+      setPage(Number(router.query.page))
+    }, [router.query.page])
 
     const navigateNextPage = () => {
       setPage(page+1)

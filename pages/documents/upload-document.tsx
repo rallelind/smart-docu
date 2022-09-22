@@ -15,6 +15,7 @@ export async function getServerSideProps({ req }) {
             author: {
                 email: session.user.email
             },
+            draft: true
         }
     })
   

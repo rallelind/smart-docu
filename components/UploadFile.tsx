@@ -6,19 +6,19 @@ import ToastError from "./toasters/ToastError";
 
 const UploadFile = ({ drafts }) => {
 
-    const [isFilePicked, setIsFilePicked] = useState(false);
     const [uploadedFileUrls, setUploadedFileUrls] = useState(drafts)
     const [pickedFile, setPickedFile] = useState("")
     const [toaster, setToaster] = useState(<></>)
 
     const changeHandler = async (event) => {
+        
+        setToaster(<ToastLoader onClose={() => setToaster(<></>)} />)
+
         const file = event.target.files[0];
         const filename = encodeURIComponent(file.name);
         const res = await fetch(`/api/upload-pdf?file=${filename}`);
         const { url, fields } = await res.json();
         const formData = new FormData();
-
-        setToaster(<ToastLoader onClose={() => setToaster(<></>)} />)
 
         Object.entries({ ...fields, file }).forEach(([key, value]) => {
           formData.append(key, value as string);
@@ -31,7 +31,6 @@ const UploadFile = ({ drafts }) => {
 
     
         if (upload.ok) {
-            setIsFilePicked(true)
             setUploadedFileUrls([...uploadedFileUrls, `${url}${file.name}`])
             setToaster(<ToastSuccess onClose={() => setToaster(<></>)} />)
         } else {
@@ -124,7 +123,7 @@ const UploadFile = ({ drafts }) => {
                 </ul>
             </div>
             <div className="mt-10 flex justify-center">
-                {uploadedFileUrls.length > 0 && <button onClick={onSubmitPDFDocument} disabled={!isFilePicked} type="button" className={`text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 ${pickedFile.length < 1 && "cursor-not-allowed"}`}>{pickedFile.length > 1 ? "Generate document" : "Pick a pdf file"}</button>}
+                {uploadedFileUrls.length > 0 && <button onClick={onSubmitPDFDocument} type="button" className={`text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 ${pickedFile.length < 1 && "cursor-not-allowed"}`}>{pickedFile.length > 1 ? "Generate document" : "Pick a pdf file"}</button>}
                 <div className="fixed bottom-0">
                     {toaster}
                 </div>
