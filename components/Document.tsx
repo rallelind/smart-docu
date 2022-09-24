@@ -22,6 +22,7 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument }) => {
       const detectDocument = document.querySelector("#document");
 
       document.addEventListener("pointerdown", (event) => {
+
         if(detectDocument.contains(event.target as Node)) {
           return
         } else {
@@ -29,23 +30,9 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument }) => {
         }
       })
     }, [])
-
-    const wrapSelectedText = () => {  
-        if (window.getSelection) {
-          let selection = window.getSelection();
-          let element = document.createElement("span");
-          element.style.backgroundColor = "yellow";
-
-          if (selection.rangeCount) {
-              let range = selection.getRangeAt(0).cloneRange();
-              range.surroundContents(element);
-              selection.removeAllRanges();
-              selection.addRange(range);
-          }
-        }
-    }
     
     const selection = () => {
+
       let selection = document.getSelection()
       let text = selection.toString()
 
@@ -55,12 +42,14 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument }) => {
     }
 
     const removeSelection = () => {
-      let selection = document.getSelection()
+
+      let selection = document.getSelection()    
       let text = selection.toString()
 
       if(text !== "") {
         setSelectionOptionsOpen(false)
       }
+
     }
 
     useEffect(() => {
@@ -87,6 +76,7 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument }) => {
             <>
               {page === text.page && (
                   <p 
+                    id="text"
                     onPointerUp={selection}
                     onPointerDown={removeSelection}
                     className='text-center leading-8'
