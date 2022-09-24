@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import { RiArrowDownSLine, RiArrowUpSLine, RiPagesLine } from "react-icons/ri"
 import { useRouter } from "next/router"
-import { HiOutlineDocument, HiOutlineDocumentDuplicate } from "react-icons/hi"
+import { HiOutlineDocument, HiOutlineDocumentDuplicate, HiOutlineCloudUpload } from "react-icons/hi"
 import { useQuery } from "react-query"
 
 const SideNavBar = () => {
@@ -14,10 +14,17 @@ const SideNavBar = () => {
 
     const routerRedirect = (path: string) => {
         router.push(
-            {pathname: path},
+            {
+                pathname: path,
+            },
             undefined,
             { shallow: true }
         )
+    }
+
+    const openDocumentsList = (event) => {
+        event.stopPropagation()
+        setDocumentsOpened(!documentsOpened)
     }
 
     const goToNewDocument = (event, title: string) => {
@@ -33,7 +40,9 @@ const SideNavBar = () => {
             router.push(
                 {
                     pathname: path,
-                    query: { page: 1 }
+                    query: { 
+                        page: 1,
+                    }
                 },
                 undefined,
                 { shallow: false }
@@ -59,7 +68,7 @@ const SideNavBar = () => {
         router.push(
             {
                 pathname: path,
-                query: { page }
+                query: { page: page }
             },
             undefined,
             { shallow: path !== window.location.pathname ? false : true }
@@ -79,11 +88,13 @@ const SideNavBar = () => {
                 <ul>
                     <li onClick={() => routerRedirect("/documents/upload-document")}>
                         <div className="cursor-pointer flex items-center p-2 rounded-lg dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <HiOutlineCloudUpload size={20} />
                             <h2 className="ml-2">Upload document</h2>
                         </div>
                     </li>
-                    <li onClick={(event) => setDocumentsOpened(true)} >
+                    <li onClick={(event) => openDocumentsList(event)} >
                         <div className="cursor-pointer w-full flex items-center p-2 rounded-lg dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <HiOutlineDocumentDuplicate size={20} />
                             <h2 className="ml-2">Documents</h2>
                             {documentsOpened ? <RiArrowUpSLine className="right-4 absolute" /> : <RiArrowDownSLine className="right-4 absolute" />}
                         </div>

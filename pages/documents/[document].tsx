@@ -42,8 +42,6 @@ export const getStaticPaths = async ({ req }) => {
 
 export default function Documents({ document }) {
 
-  console.log(document)
-
   return (
     <div className="flex">
       <div className="flex-initial w-64">
@@ -51,7 +49,7 @@ export default function Documents({ document }) {
       </div>
       <div className="flex justify-center w-full">
         <Document 
-            document={document.content}
+            generatedDocument={document.content}
           />
       </div>
     </div>
