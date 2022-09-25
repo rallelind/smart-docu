@@ -60,11 +60,32 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, commentingAc
     const navigateNextPage = () => {
       setPage(page+1)
       setSelectionOptionsOpen(false)
+      return router.push(
+        {
+          pathname: window.location.pathname,
+          query: { 
+              page: String(page+1),
+          }
+        },
+        undefined,
+        { shallow: true }
+      )
     }
   
     const navigatePageBack = () => {
       setPage(page-1)
       setSelectionOptionsOpen(false)
+      
+      return router.push(
+        {
+          pathname: window.location.pathname,
+          query: { 
+              page: String(page-1),
+          }
+        },
+        undefined,
+        { shallow: true }
+      )
     }
   
     const lastPage = generatedDocument[generatedDocument.length-1].page;
