@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import { FaMarker } from "react-icons/fa"
 import { AiFillMessage } from "react-icons/ai"
 
-const FloatingTextOptionsMenu = ({ closeFloatingOptions }) => {
+const FloatingTextOptionsMenu = ({ closeOptionsMenu }) => {
 
     let selection = document.getSelection()
 
@@ -18,8 +18,7 @@ const FloatingTextOptionsMenu = ({ closeFloatingOptions }) => {
           let selection = window.getSelection();
   
           let element = document.createElement("span");
-          element.style.backgroundColor = "yellow";
-          element.style.userSelect = "none"
+          element.classList.add("bg-[#fde047]", "select-none", "cursor-pointer")
   
           if (selection.rangeCount) {
               let range = selection.getRangeAt(0).cloneRange();
@@ -27,10 +26,9 @@ const FloatingTextOptionsMenu = ({ closeFloatingOptions }) => {
               range.surroundContents(element);
               selection.removeAllRanges();
               selection.addRange(range);
-
-              closeFloatingOptions
           }
         }
+        closeOptionsMenu()
       }
 
     return (

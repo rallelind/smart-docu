@@ -70,13 +70,13 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument }) => {
   
     return (
       <>
-        <div id="document" className='shadow-[10px_10px_0px_0px_rgba(0,0,0,0.8)] rounded-lg p-5 m-5 whitespace-pre-line border-2 border-black w-[75%]'>
-          {selectionOptionsOpen && <FloatingTextOptionsMenu closeFloatingOptions={() => setSelectionOptionsOpen(false)} />}
+        <div id="document" className='rounded-lg m-5 whitespace-pre-line w-full'>
+          {selectionOptionsOpen && <FloatingTextOptionsMenu closeOptionsMenu={() => setSelectionOptionsOpen(false)} />}
           {generatedDocument.map((text) => (
             <>
               {page === text.page && (
                   <p 
-                    id="text"
+                    id="document"
                     onPointerUp={selection}
                     onPointerDown={removeSelection}
                     className='text-center leading-8'

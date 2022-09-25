@@ -1,5 +1,6 @@
 import Document from "../../components/Document";
 import SideNavBar from "../../components/layout/SideNavBar";
+import RightNotesNavbar from "../../components/layout/RightNotesNavbar";
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
 
@@ -43,15 +44,14 @@ export const getStaticPaths = async ({ req }) => {
 export default function Documents({ document }) {
 
   return (
-    <div className="flex">
-      <div className="flex-initial w-64">
-        <SideNavBar />
-      </div>
-      <div className="flex justify-center w-full">
+    <div className="flex flex-row">
+      <SideNavBar />
+      <main className="flex flex-grow w-full">
         <Document 
             generatedDocument={document.content}
           />
-      </div>
+      </main>
+      <RightNotesNavbar />
     </div>
   )
 

@@ -28,8 +28,6 @@ export async function getServerSideProps({ req }) {
 
 export default function UploadDocument({ drafts }) {
 
-    console.log(drafts)
-
     return (
         <div className="flex">
             <div className="flex-initial w-64">
