@@ -8,9 +8,10 @@ type GeneratedDocument = {
         page: number,
         text: string,
     }]
+    commentingActive: () => void;
 }
 
-const Document: React.FC<GeneratedDocument> = ({ generatedDocument }) => {
+const Document: React.FC<GeneratedDocument> = ({ generatedDocument, commentingActive }) => {
 
     const router = useRouter()
 
@@ -71,7 +72,7 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument }) => {
     return (
       <>
         <div id="document" className='rounded-lg m-5 whitespace-pre-line w-full'>
-          {selectionOptionsOpen && <FloatingTextOptionsMenu closeOptionsMenu={() => setSelectionOptionsOpen(false)} />}
+          {selectionOptionsOpen && <FloatingTextOptionsMenu commentingActive={commentingActive} closeOptionsMenu={() => setSelectionOptionsOpen(false)} />}
           {generatedDocument.map((text) => (
             <>
               {page === text.page && (

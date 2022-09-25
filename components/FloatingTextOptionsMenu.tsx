@@ -9,7 +9,7 @@ const ColorItem = ({ color, onClick }) => {
     )
 }
 
-const FloatingTextOptionsMenu = ({ closeOptionsMenu }) => {
+const FloatingTextOptionsMenu = ({ closeOptionsMenu, commentingActive }) => {
 
     const [colorSelectionActive, setColorSelectionActive] = useState(false)
     const [selectedColor, setSelectedColor] = useState("#fde047")
@@ -67,6 +67,11 @@ const FloatingTextOptionsMenu = ({ closeOptionsMenu }) => {
         setSelectedColor(color)
     }
 
+    const messageClick = () => {
+        wrapSelectedText()
+        commentingActive()
+    }
+
     return (
         <div
             className="absolute"
@@ -92,7 +97,7 @@ const FloatingTextOptionsMenu = ({ closeOptionsMenu }) => {
                 <div onMouseDown={wrapSelectedText} className="cursor-pointer z-10">
                     <FaMarker size={18} color="white" />
                 </div>
-                <div className="cursor-pointer">
+                <div onMouseDown={messageClick} className="cursor-pointer">
                     <AiFillMessage size={18} color="white" />
                 </div>
             </span>

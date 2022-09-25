@@ -84,7 +84,7 @@ const SideNavBar = () => {
 
     return (
         <aside className="w-64 rounded fixed items-start m-5">
-            <div className="overflow-y-auto py-4 px-3 bg-gray-50 rounded-lg rounded dark:bg-gray-800">
+            <div className="overflow-y-auto py-4 px-3 bg-gray-50 rounded-lg dark:bg-gray-800">
                 <ul>
                     <li onClick={() => routerRedirect("/documents/upload-document")}>
                         <div className="cursor-pointer flex items-center p-2 rounded-lg dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700">

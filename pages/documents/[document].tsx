@@ -1,6 +1,10 @@
+import { useState } from "react";
+
 import Document from "../../components/Document";
 import SideNavBar from "../../components/layout/SideNavBar";
 import RightNotesNavbar from "../../components/layout/RightNotesNavbar";
+import CreateNote from "../../components/CreateNote";
+
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
 
@@ -43,15 +47,23 @@ export const getStaticPaths = async ({ req }) => {
 
 export default function Documents({ document }) {
 
+    const [commentingActive, setCommentingActive] = useState(false)
+
   return (
     <div className="flex flex-row">
       <SideNavBar />
       <main className="flex flex-grow w-full">
         <Document 
             generatedDocument={document.content}
-          />
+            commentingActive={() => setCommentingActive(true)}
+        />
       </main>
-      <RightNotesNavbar />
+      <RightNotesNavbar 
+        openCommentSection={() => setCommentingActive(!commentingActive)} 
+        open={commentingActive} 
+        >
+            <CreateNote />
+        </RightNotesNavbar>
     </div>
   )
 
