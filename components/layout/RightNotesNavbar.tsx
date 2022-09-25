@@ -20,7 +20,7 @@ const RightNotesNavbar = () => {
     }
 
     return (
-        <div className="w-60 h-full border-l-2 bg-gray-50 fixed right-0">
+        <div className="w-64 h-full border-l-2 bg-gray-50 fixed right-0">
             <div 
                 onClick={openComments}
                 className="cursor-pointer absolute top-2 right-2">
