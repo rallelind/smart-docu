@@ -4,6 +4,7 @@ import Document from "../../components/Document";
 import SideNavBar from "../../components/layout/SideNavBar";
 import RightNotesNavbar from "../../components/layout/RightNotesNavbar";
 import CreateNote from "../../components/CreateNote";
+import FloatingTextOptionsMenu from "../../components/FloatingTextOptionsMenu";
 
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
@@ -48,6 +49,8 @@ export const getStaticPaths = async ({ req }) => {
 export default function Documents({ document }) {
 
     const [commentingActive, setCommentingActive] = useState(false)
+    const [selectedColor, setSelectedColor] = useState("#fde047")
+
 
   return (
     <div className="flex flex-row">
@@ -55,14 +58,19 @@ export default function Documents({ document }) {
       <main className="flex flex-grow w-full">
         <Document 
             generatedDocument={document.content}
-            commentingActive={() => setCommentingActive(true)}
-        />
+        >
+            <FloatingTextOptionsMenu 
+                commentingActive={() => setCommentingActive(true)} 
+                selectedColor={selectedColor}
+                setSelectedColor={setSelectedColor}
+            />
+        </Document>
       </main>
       <RightNotesNavbar 
         openCommentSection={() => setCommentingActive(!commentingActive)} 
         open={commentingActive} 
         >
-            <CreateNote />
+            <CreateNote color={selectedColor} />
         </RightNotesNavbar>
     </div>
   )

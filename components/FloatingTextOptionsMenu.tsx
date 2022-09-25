@@ -9,10 +9,9 @@ const ColorItem = ({ color, onClick }) => {
     )
 }
 
-const FloatingTextOptionsMenu = ({ closeOptionsMenu, commentingActive }) => {
+const FloatingTextOptionsMenu = ({ commentingActive, selectedColor, setSelectedColor }) => {
 
     const [colorSelectionActive, setColorSelectionActive] = useState(false)
-    const [selectedColor, setSelectedColor] = useState("#fde047")
 
     let selection = document.getSelection()
 
