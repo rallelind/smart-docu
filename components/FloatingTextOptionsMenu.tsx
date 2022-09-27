@@ -1,47 +1,54 @@
-import { useState, useEffect } from "react"
+import { useState, useRef, useEffect } from "react"
 
 import { FaMarker, FaPalette } from "react-icons/fa"
 import { AiFillMessage } from "react-icons/ai"
+import useClickOutside from "../lib/custom-hooks/useClickOutside"
 
-const ColorItem = ({ color, onClick }) => {
+const ColorItem = ({ color, onMouseDown }) => {
     return (
-        <div onMouseDown={onClick} style={{ backgroundColor: color }} className={`h-4 w-4 rounded-full cursor-pointer z-30`}></div>
+        <div onMouseDown={onMouseDown} style={{ backgroundColor: color }} className={`h-4 w-4 rounded-full cursor-pointer z-30`}></div>
     )
 }
 
-const FloatingTextOptionsMenu = ({ commentingActive, selectedColor, setSelectedColor }) => {
+const FloatingTextOptionsMenu = ({ commentingActive, selectedColor, onColorChange, onSelectionChange }) => {
 
     const [colorSelectionActive, setColorSelectionActive] = useState(false)
+    const [top, setTop] = useState(Number)
+    const [left, setLeft] = useState(Number)
 
     let selection = document.getSelection()
 
-    let rect = selection.getRangeAt(0).getBoundingClientRect();
+    useEffect(() => {
+        if(selection.toString() !== "") {
 
-    let heightOfFloatingMenu = colorSelectionActive ? 130 : 30 
-
-    let top = `${rect.top + window.scrollY - heightOfFloatingMenu}px` 
-
-    let left = `${rect.left + (rect.width / 2) - 50}px`
+            let rect = selection.getRangeAt(0).getBoundingClientRect();
+        
+            setTop(rect.top + window.scrollY) 
+        
+            setLeft((rect.left + rect.right) / 2)
+        }
+    }, [selection])
 
     const colorPalleteOnclick = (event) => {
         event.preventDefault()
         setColorSelectionActive(!colorSelectionActive)
     }
 
-    const wrapSelectedText = () => {        
+    const wrapSelectedText = () => {   
+  
         if (window.getSelection) {
           let selection = window.getSelection();
   
           let element = document.createElement("span");
           element.style.backgroundColor = selectedColor
           element.classList.add("select-none", "cursor-pointer")
-  
+
           if (selection.rangeCount) {
               let range = selection.getRangeAt(0).cloneRange();
 
               range.surroundContents(element);
-              selection.removeAllRanges();
               selection.addRange(range);
+              selection.removeAllRanges();
           }
         }
       }
@@ -63,47 +70,58 @@ const FloatingTextOptionsMenu = ({ commentingActive, selectedColor, setSelectedC
 
     const setColor = (event, color) => {
         event.preventDefault()
-        setSelectedColor(color)
+        onColorChange(color)
     }
 
-    const messageClick = () => {
+    const onHighlightClick = (event) => {
+        event.preventDefault()
+        wrapSelectedText()
+        onSelectionChange(false)
+    }
+
+    const onMessageClick = (event) => {
+        event.preventDefault()
         wrapSelectedText()
         commentingActive()
+        onSelectionChange(true)
     }
 
     return (
-        <div
-            className="absolute"
-            style={{ top, left }}
-        >
+        <>
             {colorSelectionActive && (
-                <div className="bg-white border-black z-0 border-2 mb-1 grid gap-1 grid-cols-3 justify-items-center p-2 w-[100px] rounded-lg">
+                        <div style={{ top: top - 140, left }} className="absolute">
+                <div style={{ top, left }} className="bg-white border-black z-0 border-2 mb-1 grid gap-1 grid-cols-3 justify-items-center p-2 w-[100px] rounded-lg">
                     {colorOptions.map((colorOption) => (
-                        <ColorItem onClick={(event) => setColor(event, colorOption)} color={colorOption} />
+                        <ColorItem onMouseDown={(event) => setColor(event, colorOption)} color={colorOption} />
                         ))
                     }
+                </div>
                 </div>
             )
 
             }
-
+        <div
+            className="absolute"
+            style={{ top: top - 40, left }}
+        >
             <span 
-                className={`flex justify-evenly bg-black w-[100px] p-1 rounded-lg z-10`}
+                className={`flex justify-evenly bg-gray-800 w-[100px] p-2 rounded-lg z-10`}
             >
-                <div>
-                    <ColorItem color={selectedColor} onClick={colorPalleteOnclick} />
+                <div className="mr-1 ml-1">
+                    <ColorItem color={selectedColor} onMouseDown={colorPalleteOnclick} />
                 </div>
-                <div onMouseDown={wrapSelectedText} className="cursor-pointer z-10">
+                <div onMouseDown={onHighlightClick} className="cursor-pointer z-10 ml-1 mr-1">
                     <FaMarker size={18} color="white" />
                 </div>
-                <div onMouseDown={messageClick} className="cursor-pointer">
+                <div onMouseDown={onMessageClick} className="cursor-pointer ml-1 mr-1">
                     <AiFillMessage size={18} color="white" />
                 </div>
             </span>
             <div className="flex justify-center z-0">
-                <span className="bg-black w-4 h-4 rotate-45 bottom-0 absolute z-0"></span>
+                <span className="bg-gray-800 w-7 h-7 rotate-45 bottom-0 absolute z-0"></span>
             </div>
         </div>
+        </>
     )
 }
 

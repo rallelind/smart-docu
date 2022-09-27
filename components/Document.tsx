@@ -9,48 +9,40 @@ type GeneratedDocument = {
         text: string,
     }]
     children: React.ReactNode;
+    onSelectionChange: (state: boolean) => void;
 }
 
-const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) => {
+const Document: React.FC<GeneratedDocument> = ({ generatedDocument, onSelectionChange, children }) => {
 
     const router = useRouter()
 
     const [page, setPage] = useState(Number(router.query.page))
-
-    const [selectionOptionsOpen, setSelectionOptionsOpen] = useState(false)
-
-    useEffect(() => {
-      const detectDocument = document.querySelector("#document");
-
-      document.addEventListener("pointerdown", (event) => {
-
-        if(detectDocument.contains(event.target as Node)) {
-          return
-        } else {
-          setSelectionOptionsOpen(false)
-        }
-      })
-    }, [])
     
     const selection = () => {
 
-      let selection = document.getSelection()
-      let text = selection.toString()
+      if(document.getSelection) {
+        let selection = document.getSelection()
+        let text = selection.toString()
 
-      if(text !== "") {
-        setSelectionOptionsOpen(true)
+        if(text !== "") {
+          console.log(text)
+          console.log("reached")
+          onSelectionChange(true)
+        }
       }
     }
 
     const removeSelection = () => {
 
-      let selection = document.getSelection()    
-      let text = selection.toString()
+      if(document.getSelection) {
+        let selection = document.getSelection()    
+        let text = selection.toString()
 
-      if(text !== "") {
-        setSelectionOptionsOpen(false)
+        if(text !== "") {
+          selection.removeAllRanges();
+          onSelectionChange(false)
+        }
       }
-
     }
 
     useEffect(() => {
@@ -59,7 +51,7 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) 
 
     const navigateNextPage = () => {
       setPage(page+1)
-      setSelectionOptionsOpen(false)
+      onSelectionChange(false)
       return router.push(
         {
           pathname: window.location.pathname,
@@ -74,7 +66,7 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) 
   
     const navigatePageBack = () => {
       setPage(page-1)
-      setSelectionOptionsOpen(false)
+      onSelectionChange(false)
       
       return router.push(
         {
@@ -93,7 +85,7 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) 
     return (
       <>
         <div id="document" className='rounded-lg m-5 whitespace-pre-line w-full'>
-          {selectionOptionsOpen && children}
+          {children}
           {generatedDocument.map((text) => (
             <>
               {page === text.page && (
@@ -101,7 +93,7 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) 
                     id="document"
                     onPointerUp={selection}
                     onPointerDown={removeSelection}
-                    className='text-center leading-8'
+                    className='text-center leading-8 text-lg'
                   >
                     {text.text}
                   </p>
