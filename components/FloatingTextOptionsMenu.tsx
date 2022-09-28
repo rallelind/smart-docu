@@ -25,7 +25,7 @@ const FloatingTextOptionsMenu = ({ commentingActive, selectedColor, onColorChang
         
             setTop(rect.top + window.scrollY) 
         
-            setLeft((rect.left + rect.right) / 2)
+            setLeft(rect.left + (rect.width * 0.5))
         }
     }, [selection])
 
@@ -102,7 +102,7 @@ const FloatingTextOptionsMenu = ({ commentingActive, selectedColor, onColorChang
             }
         <div
             className="absolute"
-            style={{ top: top - 40, left }}
+            style={{ top: top - 40, left, transform: "translateX(-50%)" }}
         >
             <span 
                 className={`flex justify-evenly bg-gray-800 w-[100px] p-2 rounded-lg z-10`}

@@ -49,7 +49,8 @@ export const getStaticPaths = async ({ req }) => {
 
 export default function Documents({ document }) {
 
-  const [commentingActive, setCommentingActive] = useState(false);
+  const [commentSectionActive, setCommentSectionActive] = useState(false);
+  const [commentingActive, setCommentingActive] = useState(false)
   const [selectedColor, setSelectedColor] = useState("#fde047");
   const [selectionOptionsOpen, setSelectionOptionsOpen] = useState(false)
 
@@ -63,6 +64,11 @@ export default function Documents({ document }) {
         } 
     })
 
+    const activeCommenting = () => {
+        setCommentSectionActive(true)
+        setCommentingActive(true)
+    }
+
   return (
     <div className="flex flex-row">
       <SideNavBar />
@@ -74,7 +80,7 @@ export default function Documents({ document }) {
             {selectionOptionsOpen && (
                 <div ref={floatingMenuRef}>
                     <FloatingTextOptionsMenu
-                        commentingActive={() => setCommentingActive(true)}
+                        commentingActive={activeCommenting}
                         selectedColor={selectedColor}
                         onColorChange={setSelectedColor}
                         onSelectionChange={setSelectionOptionsOpen}
@@ -84,10 +90,10 @@ export default function Documents({ document }) {
         </Document>
       </main>
       <RightNotesNavbar
-        openCommentSection={() => setCommentingActive(!commentingActive)}
-        open={commentingActive}
+        openCommentSection={setCommentSectionActive}
+        open={commentSectionActive}
       >
-        <CreateNote color={selectedColor} />
+        <CreateNote commentingActive={commentingActive} color={selectedColor} />
       </RightNotesNavbar>
     </div>
   );

@@ -16,7 +16,7 @@ const Note = ({ note }) => {
   );
 };
 
-const CreateNote = ({ color }) => {
+const CreateNote = ({ color, commentingActive }) => {
   const [noteText, setNoteText] = useState("");
   const [notes, setNotes] = useState([]);
 
@@ -44,6 +44,7 @@ const CreateNote = ({ color }) => {
 
   return (
     <>
+    {commentingActive && (
       <div className="w-[90%] m-[5%] mt-[15%] shadow-lg rounded-lg">
         <form onSubmit={submitComment}>
           <div className="mb-4 w-full bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
@@ -69,6 +70,7 @@ const CreateNote = ({ color }) => {
           </div>
         </form>
       </div>
+    )}
       {notes.map((note) => (
         <Note note={note} />
       ))}
