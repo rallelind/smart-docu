@@ -1,7 +1,21 @@
-import { useState } from "react";
+import react, { useState } from "react";
 import { useRouter } from "next/router";
 
-const Note = ({ note }) => {
+interface Note {
+    note: {
+        color: string,
+        page: number,
+        dateOfPost: string,
+        text: string,
+    }
+}
+
+interface CreateNote {
+    color: string,
+    commentingActive: boolean,
+}
+
+const Note: React.FC<Note> = ({ note }) => {
   return (
     <div
       style={{ backgroundColor: note.color }}
@@ -16,7 +30,7 @@ const Note = ({ note }) => {
   );
 };
 
-const CreateNote = ({ color, commentingActive }) => {
+const CreateNote: React.FC<CreateNote> = ({ color, commentingActive }) => {
   const [noteText, setNoteText] = useState("");
   const [notes, setNotes] = useState([]);
 

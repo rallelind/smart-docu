@@ -47,7 +47,16 @@ export const getStaticPaths = async ({ req }) => {
   };
 };
 
-export default function Documents({ document }) {
+interface Document {
+    document: {
+        content: [{
+            page: number,
+            text: string,
+        }]
+    }
+}
+
+const Documents: React.FC<Document> = ({ document }) => {
 
   const [commentSectionActive, setCommentSectionActive] = useState(false);
   const [commentingActive, setCommentingActive] = useState(false)

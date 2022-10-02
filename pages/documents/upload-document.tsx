@@ -1,7 +1,14 @@
+import React from "react";
 import SideNavBar from "../../components/layout/SideNavBar"
 import UploadFile from "../../components/UploadFile"
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
+
+interface UploadDocument {
+    drafts: [{
+        pdfLink: string,
+    }]
+}
 
 export async function getServerSideProps({ req }) {
 
@@ -26,7 +33,7 @@ export async function getServerSideProps({ req }) {
     }
   }
 
-export default function UploadDocument({ drafts }) {
+const UploadDocument: React.FC<UploadDocument> = ({ drafts }) => {
 
     return (
         <div className="flex">
@@ -39,3 +46,5 @@ export default function UploadDocument({ drafts }) {
         </div>
     )
 }
+
+export default UploadDocument;

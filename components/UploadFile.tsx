@@ -4,7 +4,11 @@ import ToastLoader from "./toasters/ToastLoader";
 import ToastSuccess from "./toasters/ToastSuccess";
 import ToastError from "./toasters/ToastError";
 
-const UploadFile = ({ drafts }) => {
+interface UploadFile {
+    drafts: () => string[];
+}
+
+const UploadFile: React.FC<UploadFile> = ({ drafts }) => {
 
     const [uploadedFileUrls, setUploadedFileUrls] = useState(drafts)
     const [pickedFile, setPickedFile] = useState("")

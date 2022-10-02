@@ -1,20 +1,31 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, MouseEventHandler } from "react"
 
 import { FaMarker, FaPalette } from "react-icons/fa"
 import { AiFillMessage } from "react-icons/ai"
 import useClickOutside from "../lib/custom-hooks/useClickOutside"
 
-const ColorItem = ({ color, onMouseDown }) => {
+interface ColorItem {
+    color: string;
+    onMouseDown: MouseEventHandler;
+}
+
+interface FloatingTextOptionsMenu {
+    commentingActive: () => void,
+    selectedColor: string,
+    onColorChange: (value: string) => void,
+}
+
+const ColorItem: React.FC<ColorItem> = ({ color, onMouseDown }) => {
     return (
         <div 
-            onMouseDown={onMouseDown} 
             style={{ backgroundColor: color }} 
+            onMouseDown={onMouseDown} 
             className={`h-4 w-4 rounded-full cursor-pointer z-30`}>
         </div>
     )
 }
 
-const FloatingTextOptionsMenu = ({ commentingActive, selectedColor, onColorChange }) => {
+const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commentingActive, selectedColor, onColorChange }) => {
 
     const [colorSelectionActive, setColorSelectionActive] = useState(false)
     const [selectionOptionsOpen, setSelectionOptionsOpen] = useState(false)
@@ -91,19 +102,16 @@ const FloatingTextOptionsMenu = ({ commentingActive, selectedColor, onColorChang
         "#f9a8d4",
     ]
 
-    const setColor = (event, color) => {
-        event.preventDefault()
+    const setColor = (color: string) => {
         onColorChange(color)
     }
 
-    const onHighlightClick = (event) => {
-        event.preventDefault()
+    const onHighlightClick = () => {
         wrapSelectedText()
         setSelectionOptionsOpen(false)
     }
 
-    const onMessageClick = (event) => {
-        event.preventDefault()
+    const onMessageClick = () => {
         wrapSelectedText()
         commentingActive()
         setSelectionOptionsOpen(true)
@@ -120,7 +128,7 @@ const FloatingTextOptionsMenu = ({ commentingActive, selectedColor, onColorChang
                     <div style={{ top, left }} className="bg-white border-black z-0 border-2 mb-1 grid gap-1 grid-cols-3 justify-items-center p-2 w-[100px] rounded-lg">
                         {colorOptions.map((colorOption) => (
                             <ColorItem 
-                                onMouseDown={(event) => setColor(event, colorOption)} 
+                                onMouseDown={() => setColor(colorOption)} 
                                 color={colorOption} 
                             />
                         ))}

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react"
 import { BsFillArrowRightCircleFill, BsFillArrowLeftCircleFill } from "react-icons/bs"
 import { useRouter } from "next/router"
 
-type GeneratedDocument = {
+interface GeneratedDocument {
     generatedDocument: [{
         page: number,
         text: string,
-    }]
+    }];
     children: React.ReactNode;
 }
 
