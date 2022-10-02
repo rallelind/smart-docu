@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect } from "react"
 import { BsFillArrowRightCircleFill, BsFillArrowLeftCircleFill } from "react-icons/bs"
 import { useRouter } from "next/router"
-import FloatingTextOptionsMenu from "./FloatingTextOptionsMenu"
 
 type GeneratedDocument = {
     generatedDocument: [{
@@ -9,41 +8,13 @@ type GeneratedDocument = {
         text: string,
     }]
     children: React.ReactNode;
-    onSelectionChange: (state: boolean) => void;
 }
 
-const Document: React.FC<GeneratedDocument> = ({ generatedDocument, onSelectionChange, children }) => {
+const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) => {
 
     const router = useRouter()
 
     const [page, setPage] = useState(Number(router.query.page))
-    
-    const selection = () => {
-
-      if(document.getSelection) {
-        let selection = document.getSelection()
-        let text = selection.toString()
-
-        if(text !== "") {
-          console.log(text)
-          console.log("reached")
-          onSelectionChange(true)
-        }
-      }
-    }
-
-    const removeSelection = () => {
-
-      if(document.getSelection) {
-        let selection = document.getSelection()    
-        let text = selection.toString()
-
-        if(text !== "") {
-          selection.removeAllRanges();
-          onSelectionChange(false)
-        }
-      }
-    }
 
     useEffect(() => {
       setPage(Number(router.query.page))
@@ -51,7 +22,6 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, onSelectionC
 
     const navigateNextPage = () => {
       setPage(page+1)
-      onSelectionChange(false)
       return router.push(
         {
           pathname: window.location.pathname,
@@ -66,7 +36,6 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, onSelectionC
   
     const navigatePageBack = () => {
       setPage(page-1)
-      onSelectionChange(false)
       
       return router.push(
         {
@@ -91,8 +60,6 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, onSelectionC
               {page === text.page && (
                   <p 
                     id="document"
-                    onPointerUp={selection}
-                    onPointerDown={removeSelection}
                     className='text-center leading-8 text-lg'
                   >
                     {text.text}

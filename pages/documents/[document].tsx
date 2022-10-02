@@ -52,17 +52,6 @@ export default function Documents({ document }) {
   const [commentSectionActive, setCommentSectionActive] = useState(false);
   const [commentingActive, setCommentingActive] = useState(false)
   const [selectedColor, setSelectedColor] = useState("#fde047");
-  const [selectionOptionsOpen, setSelectionOptionsOpen] = useState(false)
-
-  const floatingMenuRef = useRef()
-
-  console.log(selectionOptionsOpen)
-
-  useClickOutside(floatingMenuRef, () => {
-        if(selectionOptionsOpen && floatingMenuRef.current !== undefined) {
-            setSelectionOptionsOpen(false)
-        } 
-    })
 
     const activeCommenting = () => {
         setCommentSectionActive(true)
@@ -73,27 +62,22 @@ export default function Documents({ document }) {
     <div className="flex flex-row">
       <SideNavBar />
       <main className="flex flex-grow w-full">
-        <Document 
-            generatedDocument={document.content}
-            onSelectionChange={setSelectionOptionsOpen}
-        >
-            {selectionOptionsOpen && (
-                <div ref={floatingMenuRef}>
-                    <FloatingTextOptionsMenu
-                        commentingActive={activeCommenting}
-                        selectedColor={selectedColor}
-                        onColorChange={setSelectedColor}
-                        onSelectionChange={setSelectionOptionsOpen}
-                    />
-                </div>
-            )}
+        <Document generatedDocument={document.content}>
+            <FloatingTextOptionsMenu
+                commentingActive={activeCommenting}
+                selectedColor={selectedColor}
+                onColorChange={setSelectedColor}
+            />
         </Document>
       </main>
       <RightNotesNavbar
         openCommentSection={setCommentSectionActive}
         open={commentSectionActive}
       >
-        <CreateNote commentingActive={commentingActive} color={selectedColor} />
+        <CreateNote 
+            commentingActive={commentingActive} 
+            color={selectedColor} 
+        />
       </RightNotesNavbar>
     </div>
   );
