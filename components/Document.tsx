@@ -22,6 +22,8 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) 
 
     const navigateNextPage = () => {
       setPage(page+1)
+      window.scrollTo(0,0)
+
       return router.push(
         {
           pathname: window.location.pathname,
@@ -36,6 +38,7 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) 
   
     const navigatePageBack = () => {
       setPage(page-1)
+      window.scrollTo(0,0)
       
       return router.push(
         {

@@ -59,8 +59,9 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commenting
     }, [])
 
     useClickOutside(floatingMenuRef, () => {
-        if(selectionOptionsOpen && floatingMenuRef.current !== undefined) {
+        if(selectionOptionsOpen) {
             setSelectionOptionsOpen(false)
+            setColorSelectionActive(false)
         } 
     })
 
@@ -102,7 +103,8 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commenting
         "#f9a8d4",
     ]
 
-    const setColor = (color: string) => {
+    const setColor = (event, color: string) => {
+        event.preventDefault()
         onColorChange(color)
     }
 
@@ -128,15 +130,13 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commenting
                     <div style={{ top, left }} className="bg-white border-black z-0 border-2 mb-1 grid gap-1 grid-cols-3 justify-items-center p-2 w-[100px] rounded-lg">
                         {colorOptions.map((colorOption) => (
                             <ColorItem 
-                                onMouseDown={() => setColor(colorOption)} 
+                                onMouseDown={(event) => setColor(event, colorOption)} 
                                 color={colorOption} 
                             />
                         ))}
                     </div>
                 </div>
-            )
-
-            }
+            )}
             <div
                 className="absolute"
                 style={{ top: top - 40, left }}

@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import useClickOutside from "../../lib/custom-hooks/useClickOutside";
 
 import Document from "../../components/Document";
 import SideNavBar from "../../components/layout/SideNavBar";
@@ -52,8 +51,8 @@ interface Document {
         content: [{
             page: number,
             text: string,
-        }]
-    }
+        }];
+    };
 }
 
 const Documents: React.FC<Document> = ({ document }) => {
@@ -91,3 +90,5 @@ const Documents: React.FC<Document> = ({ document }) => {
     </div>
   );
 }
+
+export default Documents;
