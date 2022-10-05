@@ -55,7 +55,6 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) 
     const lastPage = generatedDocument[generatedDocument.length-1].page;
   
     return (
-      <>
         <div id="document" className='rounded-lg m-5 whitespace-pre-line w-full'>
           {children}
           {generatedDocument.map((text) => (
@@ -76,7 +75,6 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) 
             {page !== lastPage && <BsFillArrowRightCircleFill size={20} className='m-2' onClick={navigateNextPage} />}
           </div>
         </div>
-      </>
     )
 }
 

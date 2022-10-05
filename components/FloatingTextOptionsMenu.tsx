@@ -37,8 +37,8 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commenting
     useEffect(() => {
         const documentElement = document.querySelector("#document");
 
-        const selection = () => {
-            if(document.getSelection) {
+        const mouseUp = () => {
+            if(document.getSelection) {                
               let selection = document.getSelection()
               let text = selection.toString()
       
@@ -51,12 +51,19 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commenting
             }
           }
 
-        documentElement.addEventListener("mouseup", selection)
+        documentElement.addEventListener("mouseup", mouseUp)
 
         return () => {
-            documentElement.removeEventListener("mouseup", selection)
+            documentElement.removeEventListener("mouseup", mouseUp)
         }
     }, [])
+
+    useEffect(() => {
+        if(!selectionOptionsOpen) {
+            let selection = document.getSelection()
+            selection.removeAllRanges();
+        }
+    }, [selectionOptionsOpen])
 
     useClickOutside(floatingMenuRef, () => {
         if(selectionOptionsOpen) {
@@ -139,7 +146,7 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commenting
             )}
             <div
                 className="absolute"
-                style={{ top: top - 40, left }}
+                style={{ top: top - 50, left }}
             >
                 <span 
                     className={`flex justify-evenly bg-gray-800 w-[100px] p-2 rounded-lg z-10`}
