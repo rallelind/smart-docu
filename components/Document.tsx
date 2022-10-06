@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react"
 import { BsFillArrowRightCircleFill, BsFillArrowLeftCircleFill } from "react-icons/bs"
 import { useRouter } from "next/router"
+import { useQuery } from "react-query"
+
 
 interface GeneratedDocument {
     generatedDocument: [{
         page: number,
         text: string,
     }];
+    documentTitle: string;
     children: React.ReactNode;
 }
 
-const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) => {
+const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children, documentTitle }) => {
 
     const router = useRouter()
 
@@ -51,6 +54,15 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) 
         { shallow: true }
       )
     }
+
+    const fetchDocumentHighligths = async () => {
+      const res = await fetch(`/api/user-annotations/document-highlights/${documentTitle}`)
+      return res.json()
+    }
+  
+    const { data, isSuccess, isLoading } = useQuery("document-highlights", fetchDocumentHighligths)
+
+    console.log(isSuccess && data[0])
   
     const lastPage = generatedDocument[generatedDocument.length-1].page;
   

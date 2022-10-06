@@ -9,7 +9,7 @@ export default function Home() {
     const router = useRouter()
 
     const landingPageNavigation = () => {
-        if(!session) {
+        if(session.status === "unauthenticated") {
             router.push("/api/auth/signin")
         } else {
             router.push("/documents/upload-document")

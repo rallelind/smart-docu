@@ -57,19 +57,31 @@ model VerificationToken {
 }
 
 model Document {
-  id       String  @default(cuid())
-  title    String  @id @unique
-  draft    Boolean @default(true)
-  pdfLink  String 
-  content  Content[]
-  author   User?   @relation(fields: [authorId], references: [id])
-  authorId String?
+  id             String           @default(cuid())
+  title          String           @id @unique
+  draft          Boolean          @default(true)
+  pdfLink        String
+  content        Content[]
+  userAnnotation UserAnnotation[]
+  author         User?            @relation(fields: [authorId], references: [id])
+  authorId       String?
 }
 
 model Content {
-  id   String   @id @default(cuid())
+  id         String   @id @default(cuid())
   documentId String
-  document Document @relation(fields: [documentId], references: [title])
-  text String
-  page Int
+  document   Document @relation(fields: [documentId], references: [title])
+  text       String
+  page       Int
+}
+
+model UserAnnotation {
+  id                   String   @id @default(cuid())
+  documentId           String
+  document             Document @relation(fields: [documentId], references: [title])
+  highlightStartOffset Int
+  highlightEndOffset   Int
+  highlightedText      String
+  highlightNodeHtml    String 
+  highlightNodeTagName String
 }

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, MouseEventHandler } from "react"
-
+import { useRouter } from "next/router"
 import { FaMarker, FaPalette } from "react-icons/fa"
 import { AiFillMessage } from "react-icons/ai"
 import useClickOutside from "../lib/custom-hooks/useClickOutside"
@@ -13,6 +13,7 @@ interface FloatingTextOptionsMenu {
     commentingActive: () => void,
     selectedColor: string,
     onColorChange: (value: string) => void,
+    documentTitle: string
 }
 
 const ColorItem: React.FC<ColorItem> = ({ color, onMouseDown }) => {
@@ -25,10 +26,11 @@ const ColorItem: React.FC<ColorItem> = ({ color, onMouseDown }) => {
     )
 }
 
-const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commentingActive, selectedColor, onColorChange }) => {
+const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commentingActive, selectedColor, onColorChange, documentTitle }) => {
 
     const [colorSelectionActive, setColorSelectionActive] = useState(false)
     const [selectionOptionsOpen, setSelectionOptionsOpen] = useState(false)
+    const [highlightedRange, setHighlightedRange] = useState(typeof window !== "undefined" && document.createRange())
     const [top, setTop] = useState(Number)
     const [left, setLeft] = useState(Number)
 
@@ -77,7 +79,7 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commenting
         setColorSelectionActive(!colorSelectionActive)
     }
 
-    const wrapSelectedText = () => {   
+    const wrapSelectedText = async () => {   
         if (window.getSelection) {
           let selection = window.getSelection();
   
@@ -91,6 +93,23 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commenting
               range.surroundContents(element);
               selection.addRange(range);
               selection.removeAllRanges();
+
+              const body = {
+                highlightStartOffset: range.startOffset,
+                highlightEndOffset: range.endOffset,
+                highlightedText: String(range.startContainer.textContent),
+                highlightNodeHtml: String(range.startContainer.parentElement.innerHTML),
+                highlightNodeTagName: String(range.startContainer.parentElement.tagName)
+              }
+
+              await fetch(`/api/user-annotations/highlight/${documentTitle}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify(body)
+              })
           }
         }
       }
@@ -133,7 +152,7 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commenting
     return (
         <div ref={floatingMenuRef}>
             {colorSelectionActive && (
-                <div style={{ top: top - 140, left }} className="absolute">
+                <div style={{ top: top - 150, left }} className="absolute">
                     <div style={{ top, left }} className="bg-white border-black z-0 border-2 mb-1 grid gap-1 grid-cols-3 justify-items-center p-2 w-[100px] rounded-lg">
                         {colorOptions.map((colorOption) => (
                             <ColorItem 

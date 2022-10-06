@@ -48,6 +48,7 @@ export const getStaticPaths = async ({ req }) => {
 
 interface Document {
     document: {
+        title: string
         content: [{
             page: number,
             text: string,
@@ -70,11 +71,15 @@ const Documents: React.FC<Document> = ({ document }) => {
     <div className="flex flex-row">
       <SideNavBar />
       <main className="flex flex-grow w-full">
-        <Document generatedDocument={document.content}>
+        <Document 
+          generatedDocument={document.content}
+          documentTitle={document.title}
+        >
             <FloatingTextOptionsMenu
                 commentingActive={activeCommenting}
                 selectedColor={selectedColor}
                 onColorChange={setSelectedColor}
+                documentTitle={document.title}
             />
         </Document>
       </main>
