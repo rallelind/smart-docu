@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { BiCheckbox, BiCheckboxChecked } from "react-icons/bi"
-import ToastLoader from "./toasters/ToastLoader";
-import ToastSuccess from "./toasters/ToastSuccess";
-import ToastError from "./toasters/ToastError";
+import { ToastError, ToastLoader, ToastSuccess } from "./toasters/Toasters"
 
 interface UploadFile {
     drafts: () => string[];
@@ -16,7 +14,7 @@ const UploadFile: React.FC<UploadFile> = ({ drafts }) => {
 
     const changeHandler = async (event) => {
         
-        setToaster(<ToastLoader onClose={() => setToaster(<></>)} />)
+        setToaster(<ToastLoader text="Uploading file" onClose={() => setToaster(<></>)} />)
 
         const file = event.target.files[0];
         const filename = encodeURIComponent(file.name);
@@ -33,14 +31,14 @@ const UploadFile: React.FC<UploadFile> = ({ drafts }) => {
           body: formData,
         });
 
-    
+        if (!upload.ok) {
+            setToaster(<ToastError text="There was an error uploading" onClose={() => setToaster(<></>)} />)
+        }
+        
         if (upload.ok) {
             setUploadedFileUrls([...uploadedFileUrls, `${url}${file.name}`])
-            setToaster(<ToastSuccess onClose={() => setToaster(<></>)} />)
-        } else {
-          console.error('Upload failed.');
-          setToaster(<ToastError onClose={() => setToaster(<></>)} />)
-        }
+            setToaster(<ToastSuccess text="Successfully uploaded file" onClose={() => setToaster(<></>)} />)
+        } 
     };
     
     const pickedFileToGenerateDocument = (url: string) => {
@@ -64,30 +62,31 @@ const UploadFile: React.FC<UploadFile> = ({ drafts }) => {
 
         const fileName = paths[paths.length - 1]
 
-        setToaster(<ToastLoader onClose={() => setToaster(<></>)} />)
+        setToaster(<ToastLoader text="Generating document" onClose={() => setToaster(<></>)} />)
 
         const folderName = randomId()
         
-
         const body = {
             fileName: decodeURIComponent(fileName),
             folderName: folderName,
         }
 
-        console.log(fileName)
+        const generateDocument = await fetch("/api/pdf", {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: "POST",
+            body: JSON.stringify(body)
+        })
 
-        try {
-            await fetch("/api/pdf", {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: "POST",
-                body: JSON.stringify(body)
-            })
-        } catch(error) {
-            setToaster(<ToastError onClose={() => setToaster(<></>)} />)
-        } 
+        if (generateDocument.ok) {
+            setToaster(<ToastSuccess text="Successfully generated document" onClose={() => setToaster(<></>)} />)
+        }
+
+        if (!generateDocument.ok) {
+            setToaster(<ToastError text="There was an error generating document" onClose={() => setToaster(<></>)} />)
+        }
     }
 
 

@@ -61,8 +61,7 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children, do
     }
   
     const { data, isSuccess, isLoading } = useQuery("document-highlights", fetchDocumentHighligths)
-
-    console.log(isSuccess && data[0])
+    
   
     const lastPage = generatedDocument[generatedDocument.length-1].page;
   

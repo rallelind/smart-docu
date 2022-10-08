@@ -90,16 +90,16 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commenting
           if (selection.rangeCount) {
               let range = selection.getRangeAt(0).cloneRange();
 
+
               range.surroundContents(element);
               selection.addRange(range);
               selection.removeAllRanges();
 
-              const body = {
+              /*const body = {
                 highlightStartOffset: range.startOffset,
                 highlightEndOffset: range.endOffset,
-                highlightedText: String(range.startContainer.textContent),
-                highlightNodeHtml: String(range.startContainer.parentElement.innerHTML),
-                highlightNodeTagName: String(range.startContainer.parentElement.tagName)
+                highlightStartContainer: range.startContainer,
+                highlightEndContainer: range.endContainer,
               }
 
               await fetch(`/api/user-annotations/highlight/${documentTitle}`, {
@@ -109,7 +109,8 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commenting
                 },
                 method: "POST",
                 body: JSON.stringify(body)
-              })
+              })*/
+
           }
         }
       }
