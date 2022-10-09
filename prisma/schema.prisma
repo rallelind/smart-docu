@@ -81,6 +81,8 @@ model UserAnnotation {
   document             Document @relation(fields: [documentId], references: [title])
   highlightStartOffset Int
   highlightEndOffset   Int
-  highlightStartContainer String
-  highlightEndContainer String
+  highlightTextContent String
+  highlightNodeHtml String
+  highlightTagName String
+  color String
 }

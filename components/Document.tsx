@@ -61,6 +61,47 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children, do
     }
   
     const { data, isSuccess, isLoading } = useQuery("document-highlights", fetchDocumentHighligths)
+
+    const findNode = (annotation) => {
+      let documentContent = document.getElementById('document');
+      let tagList = documentContent.getElementsByTagName(annotation.highlightTagName);
+
+      for (let tag = 0; tag < tagList.length; tag++) {
+        if (tagList[tag].innerHTML == annotation.highlightNodeHtml) {
+            let nodeList = tagList[tag].childNodes
+            for (let node = 0; node < nodeList.length; node++) {
+              if (nodeList[node].textContent == annotation.highlightTextContent) {
+                  return nodeList[node];
+              }
+          }
+        }
+      }  
+    }
+
+    useEffect(() => {
+      !isLoading && isSuccess && data.map((userAnnotations) => (
+        userAnnotations.userAnnotation.map((annotation) => {
+
+          const foundNode = findNode(annotation)
+
+          let element = document.createElement("span");
+          element.style.backgroundColor = annotation.color
+          element.classList.add("select-none", "cursor-pointer")
+
+
+          if(typeof foundNode !== "undefined") {
+            const userAnnotationRange = document.createRange()
+
+            userAnnotationRange.setStart(foundNode, annotation.highlightStartOffset)
+            userAnnotationRange.setEnd(foundNode, annotation.highlightEndOffset)
+            console.log(userAnnotationRange)
+            userAnnotationRange.surroundContents(element);
+          
+          }
+
+        })
+      ))
+    }, [page, data])
     
   
     const lastPage = generatedDocument[generatedDocument.length-1].page;

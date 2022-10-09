@@ -7,11 +7,11 @@ export default async function(req, res) {
     const { 
         highlightStartOffset,
         highlightEndOffset,
-        highlightStartContainer,
-        highlightEndContainer,
+        highlightTextContent,
+        highlightNodeHtml,
+        highlightTagName,
+        color
     } = req.body
-
-    console.log(highlightEndContainer)
 
     try {
 
@@ -22,8 +22,10 @@ export default async function(req, res) {
                     create: {
                         highlightStartOffset,
                         highlightEndOffset,
-                        highlightStartContainer,
-                        highlightEndContainer,
+                        highlightTextContent,
+                        highlightNodeHtml,
+                        highlightTagName,
+                        color,
                     }
                 }
             }            

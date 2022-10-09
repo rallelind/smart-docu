@@ -3,6 +3,7 @@ import { useRouter } from "next/router"
 import { FaMarker, FaPalette } from "react-icons/fa"
 import { AiFillMessage } from "react-icons/ai"
 import useClickOutside from "../lib/custom-hooks/useClickOutside"
+import colorOptions from "../lib/color-data/color-options"
 
 interface ColorItem {
     color: string;
@@ -10,10 +11,10 @@ interface ColorItem {
 }
 
 interface FloatingTextOptionsMenu {
-    commentingActive: () => void,
-    selectedColor: string,
-    onColorChange: (value: string) => void,
-    documentTitle: string
+    commentingActive: () => void;
+    selectedColor: string;
+    onColorChange: (value: string) => void;
+    documentTitle: string;
 }
 
 const ColorItem: React.FC<ColorItem> = ({ color, onMouseDown }) => {
@@ -26,11 +27,15 @@ const ColorItem: React.FC<ColorItem> = ({ color, onMouseDown }) => {
     )
 }
 
-const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commentingActive, selectedColor, onColorChange, documentTitle }) => {
+const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ 
+    commentingActive, 
+    selectedColor, 
+    onColorChange, 
+    documentTitle 
+}) => {
 
     const [colorSelectionActive, setColorSelectionActive] = useState(false)
     const [selectionOptionsOpen, setSelectionOptionsOpen] = useState(false)
-    const [highlightedRange, setHighlightedRange] = useState(typeof window !== "undefined" && document.createRange())
     const [top, setTop] = useState(Number)
     const [left, setLeft] = useState(Number)
 
@@ -88,47 +93,45 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ commenting
           element.classList.add("select-none", "cursor-pointer")
 
           if (selection.rangeCount) {
-              let range = selection.getRangeAt(0).cloneRange();
-
-
-              range.surroundContents(element);
-              selection.addRange(range);
-              selection.removeAllRanges();
-
-              /*const body = {
-                highlightStartOffset: range.startOffset,
-                highlightEndOffset: range.endOffset,
-                highlightStartContainer: range.startContainer,
-                highlightEndContainer: range.endContainer,
-              }
-
-              await fetch(`/api/user-annotations/highlight/${documentTitle}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: "POST",
-                body: JSON.stringify(body)
-              })*/
-
+            addUserAnnotation(selection, element)
           }
         }
       }
 
-    const colorOptions = [
-        "#fdba74",
-        "#fde047",
-        "#bef264",
-        "#86efac",
-        "#6ee7b7",
-        "#5eead4",
-        "#67e8f9",
-        "#7dd3fc",
-        "#a5b4fc",
-        "#d8b4fe",
-        "#f0abfc",
-        "#f9a8d4",
-    ]
+      const addUserAnnotation = async (selection: Selection, element: Element) => {
+        let range = selection.getRangeAt(0).cloneRange();
+
+        const savedNode = range.startContainer;
+
+        console.log(savedNode.parentElement.innerHTML)
+
+          const body = {
+            highlightStartOffset: range.startOffset,
+            highlightEndOffset: range.endOffset,
+            highlightTextContent: savedNode.textContent,
+            highlightNodeHtml: savedNode.parentElement.innerHTML,
+            highlightTagName: savedNode.parentElement.tagName,
+            color: selectedColor,
+          }
+
+          const createUserAnnotation = await fetch(`/api/user-annotations/highlight/${documentTitle}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: "POST",
+            body: JSON.stringify(body)
+          })
+
+          const data = await createUserAnnotation.json()
+
+          if(createUserAnnotation.ok) {
+            range.surroundContents(element);
+            selection.addRange(range)
+            selection.removeAllRanges()
+          }
+          return data
+      }
 
     const setColor = (event, color: string) => {
         event.preventDefault()
