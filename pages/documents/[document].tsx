@@ -66,6 +66,10 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
   const [commentingActive, setCommentingActive] = useState(false)
   const [selectedColor, setSelectedColor] = useState("#fde047");
   const [selectionOptionsOpen, setSelectionOptionsOpen] = useState(false)
+  const [floatingMenuPlacement, setFloatingMenuPlacement] = useState<{ top: number, left: number }>({
+    top: 0,
+    left: 0,
+  })
 
     const activeCommenting = () => {
         setCommentSectionActive(true)
@@ -93,8 +97,9 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
       return
     }
 
-    const highlightOnClick = () => {
+    const highlightOnClick = (top: number, left: number) => {
       setSelectionOptionsOpen(!selectionOptionsOpen)
+      setFloatingMenuPlacement({top, left})
     }
 
     const renderHighlight = () => {
@@ -106,7 +111,7 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
           let element = document.createElement("span");
           element.style.backgroundColor = annotation.color
           element.classList.add("select-none", "cursor-pointer")
-          element.onclick = highlightOnClick
+          element.onclick = () => highlightOnClick(annotation.top, annotation.left)
 
 
           if(typeof foundNode !== "undefined") {
@@ -140,6 +145,16 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
       setSelectedColor(color)
     }
 
+    const { top, left } = floatingMenuPlacement
+
+    const floatingMenuData = {
+      selectedColor,
+      selectionOptionsOpen,
+      documentTitle: generatedDocument.title,
+      topPlacement: top,
+      leftPlacement: left
+    }
+
   return (
     <div className="flex flex-row">
       <SideNavBar />
@@ -147,10 +162,9 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
         <Document generatedDocument={generatedDocument.content}>
             <FloatingTextOptionsMenu
                 commentingActive={activeCommenting}
-                selectedColor={selectedColor}
-                documentTitle={generatedDocument.title}
                 openSelectionMenu={setSelectionOptionsOpen}
-                selectionMenuOpen={selectionOptionsOpen}
+                floatingOptionPlacement={setFloatingMenuPlacement}
+                floatingMenuData={floatingMenuData}
             >
                 {colorOptions.map((colorOption, index) => (
                   <ColorItem 

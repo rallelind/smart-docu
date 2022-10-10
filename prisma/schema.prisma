@@ -85,6 +85,6 @@ model UserAnnotation {
   highlightNodeHtml String
   highlightTagName String
   color String
-  top Int
-  left Int
+  top Float
+  left Float
 }

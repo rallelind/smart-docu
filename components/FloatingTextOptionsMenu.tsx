@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, MouseEventHandler, ReactNode } from "react"
+import { useState, useRef, useEffect, MouseEventHandler, ReactNode, forwardRef } from "react"
 import { useRouter } from "next/router"
 import { FaMarker, FaPalette } from "react-icons/fa"
 import { AiFillMessage } from "react-icons/ai"
@@ -6,28 +6,33 @@ import useClickOutside from "../lib/custom-hooks/useClickOutside"
 import ColorItem from "./ColorItem"
 
 interface FloatingTextOptionsMenu {
-    commentingActive: () => void;
-    selectedColor: string;
-    documentTitle: string;
+    floatingMenuData: {
+        selectedColor: string;
+        selectionOptionsOpen: boolean;
+        documentTitle: string;
+        topPlacement: number,
+        leftPlacement: number
+    }
     children: ReactNode;
     openSelectionMenu: (value: boolean) => void;
-    selectionMenuOpen: boolean;
+    commentingActive: () => void;
+    floatingOptionPlacement: any;
 }
 
 const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ 
     commentingActive, 
-    selectedColor, 
-    children, 
-    documentTitle,
     openSelectionMenu,
-    selectionMenuOpen 
+    floatingOptionPlacement,
+    floatingMenuData,
+    children 
 }) => {
 
     const [colorSelectionActive, setColorSelectionActive] = useState(false)
-    const [top, setTop] = useState(Number)
-    const [left, setLeft] = useState(Number)
+
 
     const floatingMenuRef = useRef()
+
+    const { selectedColor, selectionOptionsOpen, documentTitle, topPlacement, leftPlacement } = floatingMenuData
 
     useEffect(() => {
         const documentElement = document.querySelector("#document");
@@ -39,8 +44,9 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
       
               if(text !== "") {
                 let rect = selection.getRangeAt(0).getBoundingClientRect();
-                setTop(rect.top + window.scrollY) 
-                setLeft((rect.left - 100/2) + (rect.width / 2))
+                let top = rect.top + window.scrollY
+                let left = (rect.left - 100/2) + (rect.width / 2)
+                floatingOptionPlacement({top, left})
                 openSelectionMenu(true)
               }
             }
@@ -54,14 +60,14 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
     }, [])
 
     useEffect(() => {
-        if(!selectionMenuOpen) {
+        if(!selectionOptionsOpen) {
             let selection = document.getSelection()
             selection.removeAllRanges();
         }
-    }, [selectionMenuOpen])
+    }, [selectionOptionsOpen])
 
     useClickOutside(floatingMenuRef, () => {
-        if(selectionMenuOpen) {
+        if(selectionOptionsOpen) {
             openSelectionMenu(false)
             setColorSelectionActive(false)
         } 
@@ -103,8 +109,8 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
             highlightNodeHtml: savedNode.parentElement.innerHTML,
             highlightTagName: savedNode.parentElement.tagName,
             color: selectedColor,
-            top, 
-            left,
+            top: topPlacement, 
+            left: leftPlacement,
           }
 
           const createUserAnnotation = await fetch(`/api/user-annotations/highlight/${documentTitle}`, {
@@ -137,22 +143,22 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
         openSelectionMenu(true)
     }
 
-    if(!selectionMenuOpen) {
+    if(!selectionOptionsOpen) {
         return null
     }
 
     return (
         <div ref={floatingMenuRef}>
             {colorSelectionActive && (
-                <div style={{ top: top - 150, left }} className="absolute">
-                    <div style={{ top, left }} className="bg-white border-black z-0 border-2 mb-1 grid gap-1 grid-cols-3 justify-items-center p-2 w-[100px] rounded-lg">
+                <div style={{ top: topPlacement - 150, left: leftPlacement }} className="absolute">
+                    <div style={{ top: topPlacement, left: leftPlacement }} className="bg-white border-black z-0 border-2 mb-1 grid gap-1 grid-cols-3 justify-items-center p-2 w-[100px] rounded-lg">
                         {children}
                     </div>
                 </div>
             )}
             <div
                 className="absolute"
-                style={{ top: top - 50, left }}
+                style={{ top: topPlacement - 50, left: leftPlacement }}
             >
                 <span 
                     className={`flex justify-evenly bg-gray-800 w-[100px] p-2 rounded-lg z-10`}

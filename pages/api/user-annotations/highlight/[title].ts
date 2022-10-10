@@ -10,9 +10,12 @@ export default async function(req, res) {
         highlightTextContent,
         highlightNodeHtml,
         highlightTagName,
-        color
+        color,
+        top,
+        left
     } = req.body
-
+    console.log(top)
+    console.log(left)
     try {
 
         let userHighlightData = await prisma.document.update({
@@ -26,6 +29,8 @@ export default async function(req, res) {
                         highlightNodeHtml,
                         highlightTagName,
                         color,
+                        top,
+                        left
                     }
                 }
             }            
