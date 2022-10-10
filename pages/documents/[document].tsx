@@ -97,9 +97,10 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
       return
     }
 
-    const highlightOnClick = (top: number, left: number) => {
+    const highlightOnClick = (top: number, left: number, color: string) => {
       setSelectionOptionsOpen(!selectionOptionsOpen)
       setFloatingMenuPlacement({top, left})
+      setSelectedColor(color)
     }
 
     const renderHighlight = () => {
@@ -111,7 +112,7 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
           let element = document.createElement("span");
           element.style.backgroundColor = annotation.color
           element.classList.add("select-none", "cursor-pointer")
-          element.onclick = () => highlightOnClick(annotation.top, annotation.left)
+          element.onclick = () => highlightOnClick(annotation.top, annotation.left, annotation.color)
 
 
           if(typeof foundNode !== "undefined") {
