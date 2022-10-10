@@ -1,16 +1,20 @@
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 
 import Document from "../../components/Document";
 import SideNavBar from "../../components/layout/SideNavBar";
 import RightNotesNavbar from "../../components/layout/RightNotesNavbar";
 import CreateNote from "../../components/CreateNote";
 import FloatingTextOptionsMenu from "../../components/FloatingTextOptionsMenu";
+import colorOptions from "../../lib/color-data/color-options";
+import ColorItem from "../../components/ColorItem";
 
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
+import { useQuery } from "react-query"
+import { useRouter } from "next/router";
 
 export const getStaticProps = async ({ params }) => {
-  const document = await prisma.document.findUnique({
+  const generatedDocument = await prisma.document.findUnique({
     where: {
       title: String(params?.document),
     },
@@ -19,7 +23,7 @@ export const getStaticProps = async ({ params }) => {
     },
   });
 
-  return { props: { document } };
+  return { props: { generatedDocument } };
 };
 
 export const getStaticPaths = async ({ req }) => {
@@ -47,7 +51,7 @@ export const getStaticPaths = async ({ req }) => {
 };
 
 interface Document {
-    document: {
+    generatedDocument: {
         title: string
         content: [{
             page: number,
@@ -56,31 +60,106 @@ interface Document {
     };
 }
 
-const Documents: React.FC<Document> = ({ document }) => {
+const Documents: React.FC<Document> = ({ generatedDocument }) => {
 
   const [commentSectionActive, setCommentSectionActive] = useState(false);
   const [commentingActive, setCommentingActive] = useState(false)
   const [selectedColor, setSelectedColor] = useState("#fde047");
+  const [selectionOptionsOpen, setSelectionOptionsOpen] = useState(false)
 
     const activeCommenting = () => {
         setCommentSectionActive(true)
         setCommentingActive(true)
     }
 
+    const fetchDocumentHighligths = async () => {
+      const res = await fetch(`/api/user-annotations/document-highlights/${generatedDocument.title}`)
+      return res.json()
+    }
+  
+    const { data, isSuccess, isLoading, refetch } = useQuery("document-highlights", fetchDocumentHighligths)
+
+    const findNode = (annotation): any | ChildNode => {
+      let documentContent = document.getElementById('document');
+      let tagList = documentContent.getElementsByTagName(annotation.highlightTagName);
+
+      const foundElement = Array.from(tagList).find((tag) => tag.innerHTML == annotation.highlightNodeHtml)
+      if (typeof foundElement !== "undefined") {
+        const foundNode = Array.from(foundElement.childNodes).find((childNode: ChildNode) => (
+          childNode.textContent === annotation.highlightTextContent)
+        )
+        return foundNode
+      }
+      return
+    }
+
+    const highlightOnClick = () => {
+      setSelectionOptionsOpen(!selectionOptionsOpen)
+    }
+
+    const renderHighlight = () => {
+      !isLoading && isSuccess && data.map((userAnnotations) => (
+        userAnnotations.userAnnotation.map((annotation) => {
+
+          const foundNode = findNode(annotation)
+
+          let element = document.createElement("span");
+          element.style.backgroundColor = annotation.color
+          element.classList.add("select-none", "cursor-pointer")
+          element.onclick = highlightOnClick
+
+
+          if(typeof foundNode !== "undefined") {
+            const userAnnotationRange = document.createRange()
+
+            userAnnotationRange.setStart(foundNode, annotation.highlightStartOffset)
+            userAnnotationRange.setEnd(foundNode, annotation.highlightEndOffset)
+            userAnnotationRange.surroundContents(element);
+          
+          }
+
+        })
+      ))
+    }
+
+    console.log(selectionOptionsOpen)
+
+    const router = useRouter()
+    
+    useEffect(() => {
+      renderHighlight()
+    }, [renderHighlight])
+
+    useEffect(() => {
+      refetch()
+      renderHighlight()
+    }, [router.query.page])
+
+    const setColor = (event, color: string) => {
+      event.preventDefault()
+      setSelectedColor(color)
+    }
+
   return (
     <div className="flex flex-row">
       <SideNavBar />
       <main className="flex flex-grow w-full">
-        <Document 
-          generatedDocument={document.content}
-          documentTitle={document.title}
-        >
+        <Document generatedDocument={generatedDocument.content}>
             <FloatingTextOptionsMenu
                 commentingActive={activeCommenting}
                 selectedColor={selectedColor}
-                onColorChange={setSelectedColor}
-                documentTitle={document.title}
-            />
+                documentTitle={generatedDocument.title}
+                openSelectionMenu={setSelectionOptionsOpen}
+                selectionMenuOpen={selectionOptionsOpen}
+            >
+                {colorOptions.map((colorOption, index) => (
+                  <ColorItem 
+                      key={index}
+                      onMouseDown={(event) => setColor(event, colorOption)} 
+                      color={colorOption} 
+                    />
+                ))}
+            </FloatingTextOptionsMenu>
         </Document>
       </main>
       <RightNotesNavbar
