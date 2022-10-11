@@ -82,9 +82,20 @@ model UserAnnotation {
   highlightStartOffset Int
   highlightEndOffset   Int
   highlightTextContent String
-  highlightNodeHtml String
-  highlightTagName String
-  color String
-  top Float
-  left Float
+  highlightNodeHtml    String
+  highlightTagName     String
+  color                String
+  top                  Float
+  left                 Float
+  notes                Note[]
+}
+
+model Note {
+  id               String         @id @default(cuid())
+  text             String
+  color            String
+  dateOfPost       String
+  page             Int
+  userAnnotation   UserAnnotation @relation(fields: [userAnnotationId], references: [id])
+  userAnnotationId String
 }

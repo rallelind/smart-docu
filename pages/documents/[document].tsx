@@ -128,8 +128,6 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
       ))
     }
 
-    console.log(selectionOptionsOpen)
-
     const router = useRouter()
     
     useEffect(() => {
@@ -181,10 +179,10 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
         openCommentSection={setCommentSectionActive}
         open={commentSectionActive}
       >
-        <CreateNote 
-            commentingActive={commentingActive} 
-            color={selectedColor} 
-        />
+          <CreateNote 
+              commentingActive={commentingActive}
+              color={selectedColor} 
+          />
       </RightNotesNavbar>
     </div>
   );
