@@ -7,6 +7,7 @@ import CreateNote from "../../components/CreateNote";
 import FloatingTextOptionsMenu from "../../components/FloatingTextOptionsMenu";
 import colorOptions from "../../lib/color-data/color-options";
 import ColorItem from "../../components/ColorItem";
+import Note from "../../components/Note";
 
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
@@ -62,26 +63,48 @@ interface Document {
 
 const Documents: React.FC<Document> = ({ generatedDocument }) => {
 
-  const [commentSectionActive, setCommentSectionActive] = useState(false);
-  const [commentingActive, setCommentingActive] = useState(false)
-  const [selectedColor, setSelectedColor] = useState("#fde047");
-  const [selectionOptionsOpen, setSelectionOptionsOpen] = useState(false)
+  const [commentSectionActive, setCommentSectionActive] = useState<boolean>(false);
+  const [commentingActive, setCommentingActive] = useState<boolean>(false)
+  const [selectedColor, setSelectedColor] = useState<string>("#fde047");
+  const [selectionOptionsOpen, setSelectionOptionsOpen] = useState<boolean>(false)
   const [floatingMenuPlacement, setFloatingMenuPlacement] = useState<{ top: number, left: number }>({
     top: 0,
     left: 0,
   })
+  const [activeAnnotationId, setActiveAnnotationId] = useState<string>()
 
     const activeCommenting = () => {
         setCommentSectionActive(true)
-        setCommentingActive(true)
+        if(commentSectionActive) {
+          setCommentingActive(!commentingActive)
+        } else {
+          setCommentingActive(true)
+        }
     }
 
     const fetchDocumentHighligths = async () => {
       const res = await fetch(`/api/user-annotations/document-highlights/${generatedDocument.title}`)
       return res.json()
     }
+
+    const fetchNotes = async () => {
+      const res = await fetch(`/api/user-annotations/notes/${generatedDocument.title}`)
+      return res.json()    
+    }
   
-    const { data, isSuccess, isLoading, refetch } = useQuery("document-highlights", fetchDocumentHighligths)
+    const { 
+      data: highlights, 
+      isSuccess: highlightLoadSuccess, 
+      isLoading: highlightLoading, 
+      refetch: refetchHighlights 
+    } = useQuery("document-highlights", fetchDocumentHighligths)
+
+    const { 
+      data: notes, 
+      isSuccess: notesSuccessLoad, 
+      isLoading: notesLoading, 
+      refetch: refetchNotes 
+    } = useQuery("document-notes", fetchNotes)
 
     const findNode = (annotation): any | ChildNode => {
       let documentContent = document.getElementById('document');
@@ -97,14 +120,17 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
       return
     }
 
-    const highlightOnClick = (top: number, left: number, color: string) => {
+    const highlightOnClick = (annotation) => {
+      const { top, left, color, id } = annotation
+
       setSelectionOptionsOpen(!selectionOptionsOpen)
       setFloatingMenuPlacement({top, left})
       setSelectedColor(color)
+      setActiveAnnotationId(id)
     }
 
     const renderHighlight = () => {
-      !isLoading && isSuccess && data.map((userAnnotations) => (
+      !highlightLoading && highlightLoadSuccess && highlights.map((userAnnotations) => (
         userAnnotations.userAnnotation.map((annotation) => {
 
           const foundNode = findNode(annotation)
@@ -112,7 +138,7 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
           let element = document.createElement("span");
           element.style.backgroundColor = annotation.color
           element.classList.add("select-none", "cursor-pointer")
-          element.onclick = () => highlightOnClick(annotation.top, annotation.left, annotation.color)
+          element.onclick = () => highlightOnClick(annotation)
 
 
           if(typeof foundNode !== "undefined") {
@@ -135,7 +161,7 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
     }, [renderHighlight])
 
     useEffect(() => {
-      refetch()
+      refetchHighlights()
       renderHighlight()
     }, [router.query.page])
 
@@ -179,10 +205,16 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
         openCommentSection={setCommentSectionActive}
         open={commentSectionActive}
       >
+        {commentingActive && (
           <CreateNote 
               commentingActive={commentingActive}
               color={selectedColor} 
+              annotationId={activeAnnotationId}
           />
+        )}
+        {notesSuccessLoad && notes.map((note) => (
+          note.notes.length > 0 && note.notes.map((noteData) => <Note note={noteData} color={note.color} />)
+        ))}
       </RightNotesNavbar>
     </div>
   );

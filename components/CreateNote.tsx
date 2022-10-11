@@ -1,45 +1,22 @@
 import react, { useState } from "react";
 import { useRouter } from "next/router";
 
-interface Note {
-    note: {
-        color: string,
-        page: number,
-        dateOfPost: string,
-        text: string,
-    }
-}
-
 interface CreateNote {
-    color: string,
-    commentingActive: boolean,
+    color: string;
+    commentingActive: boolean;
+    annotationId: string;
 }
 
-const Note: React.FC<Note> = ({ note }) => {
-  return (
-    <div
-      style={{ backgroundColor: note.color }}
-      className={`rounded-lg shadow-lg m-[5%] divide-y border border-black divide-black`}
-    >
-      <div className="flex justify-between items-center">
-        <div className="font-bold text-xs p-3">Page {note.page}</div>
-        <div className="font-bold text-xs p-3">{note.dateOfPost}</div>
-      </div>
-      <div className="p-3">{note.text}</div>
-    </div>
-  );
-};
-
-const CreateNote: React.FC<CreateNote> = ({ color, commentingActive }) => {
+const CreateNote: React.FC<CreateNote> = ({ color, commentingActive, annotationId }) => {
   const [noteText, setNoteText] = useState("");
   const [notes, setNotes] = useState([]);
 
   const router = useRouter();
 
-  const submitComment = (event) => {
+  const submitComment = async (event) => {
     event.preventDefault();
 
-    const page = router.query.page;
+    const page = Number(router.query.page);
 
     const date = new Date();
 
@@ -47,19 +24,24 @@ const CreateNote: React.FC<CreateNote> = ({ color, commentingActive }) => {
 
     const note = {
       text: noteText,
-      color,
       dateOfPost,
       page,
     };
 
-    setNotes([...notes, note]);
+    await fetch(`/api/user-annotations/create-note/${annotationId}`, {
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+      },
+      method: "POST",
+      body: JSON.stringify(note)
+    })
+
     setNoteText("");
   };
 
   return (
-    <>
-    {commentingActive && (
-      <div className="w-[90%] m-[5%] mt-[15%] shadow-lg rounded-lg">
+      <div className="w-[90%] m-[5%] shadow-lg rounded-lg">
         <form onSubmit={submitComment}>
           <div className="mb-4 w-full bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
             <div className="p-2  bg-white rounded-t-lg dark:bg-gray-800">
@@ -84,12 +66,8 @@ const CreateNote: React.FC<CreateNote> = ({ color, commentingActive }) => {
           </div>
         </form>
       </div>
-    )}
-      {notes.map((note) => (
-        <Note note={note} />
-      ))}
-    </>
-  );
-};
+    )
+  }
+
 
 export default CreateNote;

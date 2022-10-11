@@ -20,7 +20,7 @@ const RightNotesNavbar = ({ openCommentSection, open, children }) => {
                 className="cursor-pointer absolute top-2 right-2">
                 <GrFormClose size={25} />
             </div>
-            <div>
+            <div className="mt-10">
                 {children}
             </div>
         </div>

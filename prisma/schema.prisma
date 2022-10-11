@@ -93,7 +93,6 @@ model UserAnnotation {
 model Note {
   id               String         @id @default(cuid())
   text             String
-  color            String
   dateOfPost       String
   page             Int
   userAnnotation   UserAnnotation @relation(fields: [userAnnotationId], references: [id])
