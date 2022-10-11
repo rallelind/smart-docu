@@ -2,12 +2,11 @@ import react, { useState } from "react";
 import { useRouter } from "next/router";
 
 interface CreateNote {
-    color: string;
-    commentingActive: boolean;
     annotationId: string;
+    onNoteCreate: () => void;
 }
 
-const CreateNote: React.FC<CreateNote> = ({ color, commentingActive, annotationId }) => {
+const CreateNote: React.FC<CreateNote> = ({ annotationId, onNoteCreate }) => {
   const [noteText, setNoteText] = useState("");
   const [notes, setNotes] = useState([]);
 
@@ -35,7 +34,7 @@ const CreateNote: React.FC<CreateNote> = ({ color, commentingActive, annotationI
       },
       method: "POST",
       body: JSON.stringify(note)
-    })
+    }).then(() => onNoteCreate())    
 
     setNoteText("");
   };

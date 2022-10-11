@@ -207,8 +207,7 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
       >
         {commentingActive && (
           <CreateNote 
-              commentingActive={commentingActive}
-              color={selectedColor} 
+              onNoteCreate={refetchNotes}
               annotationId={activeAnnotationId}
           />
         )}
