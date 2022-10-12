@@ -8,7 +8,7 @@ export default async function(req, res) {
         const userHighlights = await prisma.document.findMany({
             where: { title: documentTitle },
             select: {
-                userAnnotation: true
+                userAnnotation: true,
             }
         })
 

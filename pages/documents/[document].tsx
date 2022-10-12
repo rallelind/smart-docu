@@ -124,7 +124,7 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
       const { top, left, color, id } = annotation
 
       setSelectionOptionsOpen(!selectionOptionsOpen)
-      setFloatingMenuPlacement({top, left})
+      setFloatingMenuPlacement({top, left })
       setSelectedColor(color)
       setActiveAnnotationId(id)
     }
@@ -181,9 +181,11 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
     }
 
   return (
-    <div className="flex flex-row">
-      <SideNavBar />
-      <main className="flex flex-grow w-full">
+    <div className="flex">
+      <div className="flex-none w-64 mr-5">
+        <SideNavBar />
+      </div>
+      <main className="grow">
         <Document generatedDocument={generatedDocument.content}>
             <FloatingTextOptionsMenu
                 commentingActive={activeCommenting}
@@ -201,20 +203,22 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
             </FloatingTextOptionsMenu>
         </Document>
       </main>
-      <RightNotesNavbar
-        openCommentSection={setCommentSectionActive}
-        open={commentSectionActive}
-      >
-        {commentingActive && (
-          <CreateNote 
-              onNoteCreate={refetchNotes}
-              annotationId={activeAnnotationId}
-          />
-        )}
-        {notesSuccessLoad && notes.map((note) => (
-          note.notes.length > 0 && note.notes.map((noteData) => <Note note={noteData} color={note.color} />)
-        ))}
-      </RightNotesNavbar>
+      <div className={`flex-none w-${commentSectionActive ? 80 : 64} ml-10`}>
+        <RightNotesNavbar
+          openCommentSection={setCommentSectionActive}
+          open={commentSectionActive}
+        >
+          {commentingActive && (
+            <CreateNote 
+                onNoteCreate={refetchNotes}
+                annotationId={activeAnnotationId}
+            />
+          )}
+          {notesSuccessLoad && notes.map((note) => (
+            note.notes.length > 0 && note.notes.map((noteData) => <Note note={noteData} color={note.color} />)
+          ))}
+        </RightNotesNavbar>
+      </div>
     </div>
   );
 }

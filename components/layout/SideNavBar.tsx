@@ -83,7 +83,7 @@ const SideNavBar = () => {
     const { data, isSuccess } = useQuery("documents-user-list", fetchDocumentList)
 
     return (
-        <aside className="w-64 rounded fixed items-start m-5">
+        <aside className="w-64 rounded fixed m-5">
             <div className="overflow-y-auto py-4 px-3 bg-gray-50 rounded-lg dark:bg-gray-800">
                 <ul>
                     <li onClick={() => routerRedirect("/documents/upload-document")}>
