@@ -1,8 +1,9 @@
 import React from "react";
-import SideNavBar from "../../components/layout/SideNavBar"
+import SideNavBar from "../../components/navbars/SideNavBar"
 import UploadFile from "../../components/UploadFile"
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
+import ApplicationLayout from "../../components/layout/ApplicationLayout";
 
 interface UploadDocument {
     drafts: [{
@@ -36,15 +37,16 @@ export async function getServerSideProps({ req }) {
 const UploadDocument: React.FC<UploadDocument> = ({ drafts }) => {
 
     return (
-        <div className="flex">
-            <div className="flex-initial w-64">
-                <SideNavBar />
-            </div>
             <div className="flex justify-center w-full">
                 <UploadFile drafts={() => drafts.map((draft) => draft.pdfLink)} />
             </div>
-        </div>
     )
 }
 
 export default UploadDocument;
+
+UploadDocument.getLayout = function getLayout(page) {
+    return (
+        <ApplicationLayout>{page}</ApplicationLayout>
+    )
+  }

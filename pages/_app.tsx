@@ -7,10 +7,12 @@ function MyApp({ Component, pageProps }) {
 
   const queryClient = new QueryClient()
 
+  const getLayout = Component.getLayout || ((page) => page)
+
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider session={pageProps.session}>
-        <Component {...pageProps} />
+        {getLayout(<Component {...pageProps} />)}
       </SessionProvider>
     </QueryClientProvider>
   )

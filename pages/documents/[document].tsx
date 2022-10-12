@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 
 import Document from "../../components/Document";
-import SideNavBar from "../../components/layout/SideNavBar";
-import RightNotesNavbar from "../../components/layout/RightNotesNavbar";
+import SideNavBar from "../../components/navbars/SideNavBar";
+import ApplicationLayout from "../../components/layout/ApplicationLayout";
+import RightNotesNavbar from "../../components/navbars/RightNotesNavbar";
 import CreateNote from "../../components/CreateNote";
 import FloatingTextOptionsMenu from "../../components/FloatingTextOptionsMenu";
 import colorOptions from "../../lib/color-data/color-options";
@@ -181,10 +182,7 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
     }
 
   return (
-    <div className="flex">
-      <div className="flex-none w-64 mr-5">
-        <SideNavBar />
-      </div>
+    <>
       <main className="grow">
         <Document generatedDocument={generatedDocument.content}>
             <FloatingTextOptionsMenu
@@ -219,8 +217,14 @@ const Documents: React.FC<Document> = ({ generatedDocument }) => {
           ))}
         </RightNotesNavbar>
       </div>
-    </div>
+    </>
   );
 }
 
 export default Documents;
+
+Documents.getLayout = function getLayout(page) {
+  return (
+      <ApplicationLayout>{page}</ApplicationLayout>
+  )
+}
