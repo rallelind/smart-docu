@@ -37,9 +37,9 @@ export async function getServerSideProps({ req }) {
 const UploadDocument: React.FC<UploadDocument> = ({ drafts }) => {
 
     return (
-            <div className="flex justify-center w-full">
-                <UploadFile drafts={() => drafts.map((draft) => draft.pdfLink)} />
-            </div>
+        <div className="flex justify-center w-full">
+            <UploadFile drafts={() => drafts.map((draft) => draft.pdfLink)} />
+        </div>
     )
 }
 

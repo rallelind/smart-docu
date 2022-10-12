@@ -6,9 +6,14 @@ import { getSession } from 'next-auth/react';
 
 
 export default async function handler(req, res) {
+
     
     const storage = new Storage({
-        keyFilename: "/Users/rasmuslind/Desktop/theta-totem-362717-ab82f004ec37.json"
+      projectId: process.env.GOOGLE_PROJECT_ID,
+      credentials: {
+        client_email: process.env.GOOGLE_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY,
+      },
     });
     
     const bucketName = 'pdf-storage-smart-docu';

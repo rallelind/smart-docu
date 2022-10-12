@@ -1,4 +1,5 @@
-
+// this code is used to generate the data from GCV - this API endpoint is not used anymore
+// but it serves as a reference to how i am handling the reading of the pdf file
 
 export default async function handler(req, res) {
 

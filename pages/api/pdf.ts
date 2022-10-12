@@ -5,7 +5,11 @@ export default async function handler(req, res) {
   const vision = require('@google-cloud/vision');
 
   const client = new vision.ImageAnnotatorClient({
-    keyFilename: "/Users/rasmuslind/Desktop/theta-totem-362717-ab82f004ec37.json"
+    projectId: process.env.GOOGLE_PROJECT_ID,
+    credentials: {
+      client_email: process.env.GOOGLE_EMAIL,
+      private_key: process.env.GOOGLE_PRIVATE_KEY,
+    },
   });
 
   const session = await getSession({ req })
