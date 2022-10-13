@@ -4,6 +4,7 @@ import UploadFile from "../../components/UploadFile"
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
 import ApplicationLayout from "../../components/layout/ApplicationLayout";
+import { NextPageWithLayout } from "../_app"
 
 interface UploadDocument {
     drafts: [{
@@ -34,7 +35,7 @@ export async function getServerSideProps({ req }) {
     }
   }
 
-const UploadDocument: React.FC<UploadDocument> = ({ drafts }) => {
+const UploadDocument: NextPageWithLayout<UploadDocument> = ({ drafts }) => {
 
     return (
         <div className="flex justify-center w-full">

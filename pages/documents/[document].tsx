@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-
 import Document from "../../components/Document";
 import SideNavBar from "../../components/navbars/SideNavBar";
 import ApplicationLayout from "../../components/layout/ApplicationLayout";
@@ -9,6 +8,7 @@ import FloatingTextOptionsMenu from "../../components/FloatingTextOptionsMenu";
 import colorOptions from "../../lib/color-data/color-options";
 import ColorItem from "../../components/ColorItem";
 import Note from "../../components/Note";
+import { NextPageWithLayout } from "../_app"
 
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
@@ -62,7 +62,7 @@ interface Document {
     };
 }
 
-const Documents: React.FC<Document> = ({ generatedDocument }) => {
+const Documents: NextPageWithLayout<Document> = ({ generatedDocument }) => {
 
   const [commentSectionActive, setCommentSectionActive] = useState<boolean>(false);
   const [commentingActive, setCommentingActive] = useState<boolean>(false)
