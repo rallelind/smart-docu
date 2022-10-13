@@ -25,7 +25,7 @@ export const getStaticProps = async ({ params }) => {
     },
   });
 
-  return { props: { generatedDocument } };
+  return { props: { generatedDocument }, revalidate: 5 };
 };
 
 export const getStaticPaths = async ({ req }) => {
@@ -50,6 +50,7 @@ export const getStaticPaths = async ({ req }) => {
     paths,
     fallback: false,
   };
+  
 };
 
 interface Document {
