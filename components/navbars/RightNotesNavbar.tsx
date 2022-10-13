@@ -14,7 +14,7 @@ const RightNotesNavbar = ({ openCommentSection, open, children }) => {
     }
 
     return (
-        <div className="h-full right-0 position fixed border-l-2 bg-gray-50 overflow-y-scroll">
+        <div className="h-full right-0 w-80 fixed border-l-2 bg-gray-50 overflow-y-scroll">
             <div 
                 onClick={() => openCommentSection(false)}
                 className="cursor-pointer absolute top-2 right-2">
