@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
     const responseHeader = 'Content-Type';
 
-    const origin = "http://localhost:3000";
+    const origin = "https://smart-docu.vercel.app";
 
     const method = 'POST'
 
