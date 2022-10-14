@@ -1,16 +1,27 @@
 import React, { useState, useEffect } from "react"
+import { useQuery } from "react-query";
 import { BiCheckbox, BiCheckboxChecked } from "react-icons/bi"
 import { ToastError, ToastLoader, ToastSuccess } from "./toasters/Toasters"
 
-interface UploadFile {
-    drafts: () => string[];
-}
 
-const UploadFile: React.FC<UploadFile> = ({ drafts }) => {
+const UploadFile: React.FC = () => {
 
-    const [uploadedFileUrls, setUploadedFileUrls] = useState(drafts)
     const [pickedFile, setPickedFile] = useState("")
     const [toaster, setToaster] = useState(<></>)
+
+    const fetchDrafts = async () => {
+        const res = await fetch(`/api/documents/drafts`)
+        return res.json()
+    }
+
+    const { 
+        data, 
+        isSuccess,
+        isLoading, 
+        refetch,
+      } = useQuery("document-drafts", fetchDrafts)
+
+      console.log(data)
 
     const changeHandler = async (event) => {
         
@@ -40,7 +51,7 @@ const UploadFile: React.FC<UploadFile> = ({ drafts }) => {
         }
         
         if (upload.ok) {
-            setUploadedFileUrls([...uploadedFileUrls, `${url}${file.name}`])
+            refetch()
             setToaster(<ToastSuccess text="Successfully uploaded file" onClose={() => setToaster(<></>)} />)
         } 
 
@@ -120,18 +131,26 @@ const UploadFile: React.FC<UploadFile> = ({ drafts }) => {
             </p>
             <div className="mt-10">
                 <ul>
-                    {uploadedFileUrls.map((uploadedFileUrl) => (
+                    {isLoading && (
+                        <>
+                            <li className={`animate-pulse cursor-pointer flex items-center mt-5 p-2 h-10 rounded-lg bg-gray-100`}></li>
+                            <li className={`animate-pulse cursor-pointer flex items-center mt-5 p-2 h-10 rounded-lg bg-gray-100`}></li>
+                            <li className={`animate-pulse cursor-pointer flex items-center mt-5 p-2 h-10 rounded-lg bg-gray-100`}></li>
+                            <li className={`animate-pulse cursor-pointer flex items-center mt-5 p-2 h-10 rounded-lg bg-gray-100`}></li>
+                        </>
+                    )}
+                    {isSuccess && data.map((uploadedFileUrl) => (
                         <li 
-                            onClick={() => pickedFileToGenerateDocument(uploadedFileUrl)}
-                            className={`cursor-pointer flex items-center mt-5 p-2 rounded-lg ${uploadedFileUrl === pickedFile ? "bg-green-200" : "bg-gray-50"} ${uploadedFileUrl !== pickedFile && "hover:bg-gray-100"}`}>
-                            <p className={`w-full font-medium ${uploadedFileUrl === pickedFile ? "text-black" : "text-gray-600"} underline`}>{uploadedFileUrl}</p>
-                            {uploadedFileUrl === pickedFile ? <BiCheckboxChecked size={30} /> : <BiCheckbox size={30} />}
+                            onClick={() => pickedFileToGenerateDocument(uploadedFileUrl.pdfLink)}
+                            className={`cursor-pointer flex items-center mt-5 p-2 rounded-lg ${uploadedFileUrl.pdfLink === pickedFile ? "bg-green-200" : "bg-gray-50"} ${uploadedFileUrl.pdfLink !== pickedFile && "hover:bg-gray-100"}`}>
+                            <p className={`w-full font-medium ${uploadedFileUrl.pdfLink === pickedFile ? "text-black" : "text-gray-600"} underline`}>{uploadedFileUrl.pdfLink}</p>
+                            {uploadedFileUrl.pdfLink === pickedFile ? <BiCheckboxChecked size={30} /> : <BiCheckbox size={30} />}
                         </li>
                     ))}
                 </ul>
             </div>
             <div className="mt-10 flex justify-center">
-                {uploadedFileUrls.length > 0 && <button onClick={onSubmitPDFDocument} type="button" className={`text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 ${pickedFile.length < 1 && "cursor-not-allowed"}`}>{pickedFile.length > 1 ? "Generate document" : "Pick a pdf file"}</button>}
+                {isSuccess && data.length > 0 && <button onClick={onSubmitPDFDocument} type="button" className={`text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 ${pickedFile.length < 1 && "cursor-not-allowed"}`}>{pickedFile.length > 1 ? "Generate document" : "Pick a pdf file"}</button>}
                 <div className="fixed bottom-0">
                     {toaster}
                 </div>

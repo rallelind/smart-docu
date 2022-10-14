@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Document from "../../components/Document";
-import SideNavBar from "../../components/navbars/SideNavBar";
 import ApplicationLayout from "../../components/layout/ApplicationLayout";
 import RightNotesNavbar from "../../components/navbars/RightNotesNavbar";
 import CreateNote from "../../components/CreateNote";
