@@ -3,6 +3,7 @@ import prisma from "../../lib/prisma";
 
 export default async function handler(req, res) {
   const vision = require('@google-cloud/vision');
+  const {Storage} = require('@google-cloud/storage');
 
   const client = new vision.ImageAnnotatorClient({
     projectId: process.env.GOOGLE_PROJECT_ID,
@@ -12,13 +13,15 @@ export default async function handler(req, res) {
     },
   });
 
-  const session = await getSession({ req })
-
-  const {Storage} = require('@google-cloud/storage');
-
   const storage = new Storage({
-      keyFilename: "/Users/rasmuslind/Desktop/theta-totem-362717-ab82f004ec37.json"
+    projectId: process.env.GOOGLE_PROJECT_ID,
+    credentials: {
+      client_email: process.env.GOOGLE_EMAIL,
+      private_key: process.env.GOOGLE_PRIVATE_KEY,
+    },
   });
+
+  const session = await getSession({ req })
 
   try {
 

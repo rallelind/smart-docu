@@ -25,8 +25,11 @@ const UploadFile: React.FC<UploadFile> = ({ drafts }) => {
         Object.entries({ ...fields, file }).forEach(([key, value]) => {
           formData.append(key, value as string);
         });
+
+        console.log(url)
+
+        console.log(fields)
         
-        try {
         const upload = await fetch(url, {
           method: 'POST',
           body: formData,
@@ -40,9 +43,7 @@ const UploadFile: React.FC<UploadFile> = ({ drafts }) => {
             setUploadedFileUrls([...uploadedFileUrls, `${url}${file.name}`])
             setToaster(<ToastSuccess text="Successfully uploaded file" onClose={() => setToaster(<></>)} />)
         } 
-        } catch(error) {
-            console.log(error)
-        }
+
     };
     
     const pickedFileToGenerateDocument = (url: string) => {
