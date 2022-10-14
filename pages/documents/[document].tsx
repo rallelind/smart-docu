@@ -18,7 +18,7 @@ import { useRouter } from "next/router";
 export const getStaticProps = async ({ params }) => {
   const generatedDocument = await prisma.document.findUnique({
     where: {
-      title: String(params?.document),
+      title: String(params.document),
     },
     include: {
       content: true,
@@ -29,15 +29,10 @@ export const getStaticProps = async ({ params }) => {
 };
 
 export const getStaticPaths = async ({ req }) => {
-  const session = await getSession({ req });
-
   const documents = await prisma.document.findMany({
-    where: {
-      author: { email: session?.user?.email },
-    },
     select: {
       title: true,
-    },
+    }
   });
 
   const documentTitles = documents.map((document) => document.title);
