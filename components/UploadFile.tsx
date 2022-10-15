@@ -37,6 +37,10 @@ const UploadFile: React.FC = () => {
         Object.entries({ ...fields, file }).forEach(([key, value]) => {
           formData.append(key, value as string);
         });
+
+        console.log(url)
+
+        console.log(fields)
         
         const upload = await fetch(url, {
           method: 'POST',
