@@ -19,6 +19,7 @@ const UploadFile: React.FC = () => {
         isSuccess,
         isLoading, 
         refetch,
+        isRefetching
       } = useQuery("document-drafts", fetchDrafts)
 
       console.log(data)
@@ -36,10 +37,6 @@ const UploadFile: React.FC = () => {
         Object.entries({ ...fields, file }).forEach(([key, value]) => {
           formData.append(key, value as string);
         });
-
-        console.log(url)
-
-        console.log(fields)
         
         const upload = await fetch(url, {
           method: 'POST',
