@@ -42,20 +42,20 @@ const UploadFile: React.FC = () => {
 
         console.log(fields)
         
-        const upload = await fetch(url, {
-          method: 'POST',
-          body: formData,
-        });
+            const upload = await fetch(url, {
+            method: 'POST',
+            body: formData,
+            });
 
-        if (!upload.ok) {
-            setToaster(<ToastError text="There was an error uploading" onClose={() => setToaster(<></>)} />)
-        }
+            if (!upload.ok) {
+                setToaster(<ToastError text="There was an error uploading" onClose={() => setToaster(<></>)} />)
+            }
+            
+            if (upload.ok) {
+                refetch()
+                setToaster(<ToastSuccess text="Successfully uploaded file" onClose={() => setToaster(<></>)} />)
+            } 
         
-        if (upload.ok) {
-            refetch()
-            setToaster(<ToastSuccess text="Successfully uploaded file" onClose={() => setToaster(<></>)} />)
-        } 
-
     };
     
     const pickedFileToGenerateDocument = (url: string) => {
@@ -98,6 +98,7 @@ const UploadFile: React.FC = () => {
         })
 
         if (generateDocument.ok) {
+            refetch()
             setToaster(<ToastSuccess text="Successfully generated document" onClose={() => setToaster(<></>)} />)
         }
 
