@@ -25,10 +25,14 @@ export const getStaticPaths = async ({ req }) => {
 
   const documents = await allDocumentTitlesQuery(session?.user?.email)
 
-  const documentTitles = documents.map((document) => document.title);
+  const documentTitles = documents.map((document) => {
+    if(!document.draft) {
+      return document.title
+    }
+  });
 
   const paths = documentTitles.map((document) => ({
-    params: { document: document.toString() },
+      params: { document: document.toString() },
   }));
 
   return {

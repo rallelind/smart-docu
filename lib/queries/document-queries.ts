@@ -75,6 +75,7 @@ export const allDocumentTitlesQuery = async (email: string) => {
         },
         select: {
           title: true,
+          draft: true
         },
       });
 }
