@@ -142,6 +142,11 @@ const Documents: NextPageWithLayout<Document> = ({ generatedDocument }) => {
       renderHighlight()
     }, [router.query.page])
 
+    useEffect(() => {
+      refetchHighlights()
+      refetchNotes()
+    }, [generatedDocument.title])
+
     const setColor = (event, color: string) => {
       event.preventDefault()
       setSelectedColor(color)
