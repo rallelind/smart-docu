@@ -1,23 +1,14 @@
 
-import { Storage } from '@google-cloud/storage';
 import { Prisma } from '@prisma/client';
-import prisma from '../../lib/prisma';
 import { getSession } from 'next-auth/react';
 import { generateDocumentQuery } from '../../lib/queries/document-queries';
-
-const storage = new Storage({
-  projectId: process.env.GOOGLE_PROJECT_ID,
-  credentials: {
-    client_email: process.env.GOOGLE_EMAIL,
-    private_key: process.env.GOOGLE_PRIVATE_KEY,
-  },
-});
+import { googleCloudStorageClient } from '../../lib/google-cloud-platform/clients';
 
 export default async function handler(req, res) {
     
     const bucketName = 'pdf-storage-smart-docu';
 
-    const bucket = storage.bucket(bucketName);
+    const bucket = googleCloudStorageClient.bucket(bucketName);
 
     const responseHeader = 'Content-Type';
 

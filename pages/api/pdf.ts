@@ -1,24 +1,6 @@
 import { getSession } from "next-auth/react";
-import prisma from "../../lib/prisma";
-import { Storage } from "@google-cloud/storage";
-const vision = require('@google-cloud/vision');
 import { createDocumentDraftQuery } from "../../lib/queries/document-queries";
-
-const client = new vision.ImageAnnotatorClient({
-  projectId: process.env.GOOGLE_PROJECT_ID,
-  credentials: {
-    client_email: process.env.GOOGLE_EMAIL,
-    private_key: process.env.GOOGLE_PRIVATE_KEY,
-  },
-});
-
-const storage = new Storage({
-  projectId: process.env.GOOGLE_PROJECT_ID,
-  credentials: {
-    client_email: process.env.GOOGLE_EMAIL,
-    private_key: process.env.GOOGLE_PRIVATE_KEY,
-  },
-});
+import { googleCloudStorageClient, googleCloudVisionClient } from "../../lib/google-cloud-platform/clients";
 
 export default async function handler(req, res) {
 
@@ -59,13 +41,13 @@ export default async function handler(req, res) {
       ],
     };
     
-    const [operation] = await client.asyncBatchAnnotateFiles(request);
+    const [operation] = await googleCloudVisionClient.asyncBatchAnnotateFiles(request);
 
     const [filesResponse] = await operation.promise();
 
     const destinationUri = filesResponse.responses[0].outputConfig.gcsDestination.uri;
 
-    const bucket = storage.bucket(bucketName)
+    const bucket = googleCloudStorageClient.bucket(bucketName)
 
     const [files] = await bucket.getFiles({ prefix: `${session.user.email}/${req.body.folderName}` });
   
