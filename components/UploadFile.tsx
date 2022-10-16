@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { useGetDocumentDrafts, useGetDocumentsList } from "../lib/custom-hooks/react-queries";
 import { BiCheckbox, BiCheckboxChecked } from "react-icons/bi"
 import { ToastError, ToastLoader, ToastSuccess } from "./toasters/Toasters"
@@ -88,8 +88,8 @@ const UploadFile: React.FC = () => {
         })
 
         if (generateDocument.ok) {
-            refetchDrafts()
-            refetchDocumentList()
+            await refetchDrafts()
+            await refetchDocumentList()
             setToaster(<ToastSuccess text="Successfully generated document" onClose={() => setToaster(<></>)} />)
         }
 
@@ -134,6 +134,7 @@ const UploadFile: React.FC = () => {
                     )}
                     {isSuccess && data.map((uploadedFileUrl) => (
                         <li 
+                            key={uploadedFileUrl.pdfLink}
                             onClick={() => pickedFileToGenerateDocument(uploadedFileUrl.pdfLink)}
                             className={`cursor-pointer flex items-center mt-5 p-2 rounded-lg ${uploadedFileUrl.pdfLink === pickedFile ? "bg-green-200" : "bg-gray-50"} ${uploadedFileUrl.pdfLink !== pickedFile && "hover:bg-gray-100"}`}>
                             <p className={`w-full font-medium ${uploadedFileUrl.pdfLink === pickedFile ? "text-black" : "text-gray-600"} underline`}>{uploadedFileUrl.pdfLink}</p>

@@ -22,17 +22,17 @@ const fetchDocumentList = async () => {
 }
 
 export const useGetDocumentHighlights = (title: string) => {
-    return useQuery("document-highlights", () => fetchDocumentHighligths(title))
+    return useQuery(["document-highlights"], () => fetchDocumentHighligths(title))
 }
 
 export const useGetDocumentNotes = (title: string) => {
-    return useQuery("document-notes", () => fetchNotes(title))
+    return useQuery(["document-notes"], () => fetchNotes(title))
 }
 
 export const useGetDocumentDrafts = () => {
-    return useQuery("document-drafts", fetchDrafts)
+    return useQuery(["document-drafts"], fetchDrafts)
 }
 
 export const useGetDocumentsList = () => {
-    return useQuery("documents-user-list", fetchDocumentList)
+    return useQuery(["documents-list"], fetchDocumentList)
 }

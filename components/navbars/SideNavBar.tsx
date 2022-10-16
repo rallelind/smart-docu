@@ -33,9 +33,6 @@ const SideNavBar = () => {
 
         const path = `/documents/${encodeURIComponent(title)}`
 
-        console.log(window.location.pathname)
-        console.log(encodeURIComponent(title))
-
         if(path !== window.location.pathname) {
             router.push(
                 {
@@ -61,8 +58,6 @@ const SideNavBar = () => {
 
         event.stopPropagation()
 
-        console.log(window.location.pathname)
-
         const path = `/documents/${encodeURIComponent(title)}`
 
         router.push(
@@ -74,11 +69,6 @@ const SideNavBar = () => {
             { shallow: path !== window.location.pathname ? false : true }
         )
     }
-
-    const fetchDocumentList = async () => {
-        const res = await fetch("/api/documents/documents-user-list")
-        return res.json()
-      }
     
     const { data, isSuccess } = useGetDocumentsList()
 
@@ -101,7 +91,7 @@ const SideNavBar = () => {
                         {documentsOpened && (
                             <ul className="pl-4 list-inside">
                                 {isSuccess && data.map((document) => (
-                                    <li onClick={(event) => goToNewDocument(event, document.title)}>
+                                    <li key={document.title} onClick={(event) => goToNewDocument(event, document.title)}>
                                         <div className="cursor-pointer w-full flex items-center p-2 rounded-lg dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700">
                                             <h2 className="text-sm mr-2 ml-2">
                                                 {document.title}
@@ -110,7 +100,7 @@ const SideNavBar = () => {
                                         </div>
                                         {currentDocumentOpen === document.title && document.content.map((content) => (
                                             <ul className="pl-4 list-inside">
-                                                <li onClick={(event) => navigateToPage(event, document.title, content.page)}>
+                                                <li key={content.page} onClick={(event) => navigateToPage(event, document.title, content.page)}>
                                                     <div className="cursor-pointer w-full flex items-center p-2 rounded-lg dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700">
                                                         <RiPagesLine />
                                                         <h2 className="text-sm mr-2 ml-2">{`Page ${content.page}`}</h2>

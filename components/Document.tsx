@@ -63,6 +63,7 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) 
             <>
               {page === text.page && (
                   <p 
+                    key={page}
                     id="document"
                     className='text-center leading-8 text-lg'
                   >
