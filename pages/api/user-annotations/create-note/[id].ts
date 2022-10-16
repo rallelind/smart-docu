@@ -5,8 +5,6 @@ export default async function(req, res) {
 
     const userAnnotationId = req.query.id
 
-    console.log(req.query.id)
-
     try {
         const createdNote = await createNote(req.body, userAnnotationId)
         res.json(createdNote)
