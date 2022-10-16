@@ -3,6 +3,7 @@ import { Storage } from '@google-cloud/storage';
 import { Prisma } from '@prisma/client';
 import prisma from '../../lib/prisma';
 import { getSession } from 'next-auth/react';
+import { generateDocumentQuery } from '../../lib/queries/document-queries';
 
 const storage = new Storage({
   projectId: process.env.GOOGLE_PROJECT_ID,
@@ -45,15 +46,13 @@ export default async function handler(req, res) {
 
     const [response] = await file.generateSignedPostPolicyV4(options);
 
+    const email = session.user.email;
+    const title = req.query.title;
+    const pdfLink = `${response.url}${response.fields.key}`;
+
     if(response) {
       try {
-        await prisma.document.create({
-          data: {
-            author: { connect: { email: session.user.email } },
-            title: req.query.file,
-            pdfLink: `${response.url}${response.fields.key}`,
-          }
-        })
+        await generateDocumentQuery(email, title, pdfLink)
         res.status(200).json(response);
       } catch(error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

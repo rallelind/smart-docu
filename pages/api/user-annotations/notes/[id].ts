@@ -1,17 +1,12 @@
-import prisma from "../../../../lib/prisma";
+import { allNotesQuery } from "../../../../lib/queries/annotation-queries";
 
 export default async function(req, res) {
 
     const documentId = req.query.id
 
     try {
-        const notes = await prisma.userAnnotation.findMany({
-            where: { documentId: documentId },
-            select: {
-                color: true,
-                notes: true
-            }
-        })
+        const notes = await allNotesQuery(documentId)
+
         res.json(notes)
     } catch(error) {
         throw error

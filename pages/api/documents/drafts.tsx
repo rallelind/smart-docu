@@ -1,21 +1,12 @@
 import { getSession } from "next-auth/react"
-import prisma from "../../../lib/prisma"
+import { documentDraftsQuery } from "../../../lib/queries/document-queries"
 
 export default async function(req, res) {
     try {
         const session = await getSession({ req })
 
-        const drafts = await prisma.document.findMany({
-            select: {
-                pdfLink: true,
-            },
-            where: {
-                author: {
-                    email: session.user.email
-                },
-                draft: true
-            }
-        })
+        const drafts = await documentDraftsQuery(session.user.email)
+
         res.json(drafts)
     } catch(error) {
         throw error

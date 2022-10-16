@@ -1,25 +1,26 @@
 import { getSession } from "next-auth/react";
 import prisma from "../../lib/prisma";
+import { Storage } from "@google-cloud/storage";
+const vision = require('@google-cloud/vision');
+import { createDocumentDraftQuery } from "../../lib/queries/document-queries";
+
+const client = new vision.ImageAnnotatorClient({
+  projectId: process.env.GOOGLE_PROJECT_ID,
+  credentials: {
+    client_email: process.env.GOOGLE_EMAIL,
+    private_key: process.env.GOOGLE_PRIVATE_KEY,
+  },
+});
+
+const storage = new Storage({
+  projectId: process.env.GOOGLE_PROJECT_ID,
+  credentials: {
+    client_email: process.env.GOOGLE_EMAIL,
+    private_key: process.env.GOOGLE_PRIVATE_KEY,
+  },
+});
 
 export default async function handler(req, res) {
-  const vision = require('@google-cloud/vision');
-  const {Storage} = require('@google-cloud/storage');
-
-  const client = new vision.ImageAnnotatorClient({
-    projectId: process.env.GOOGLE_PROJECT_ID,
-    credentials: {
-      client_email: process.env.GOOGLE_EMAIL,
-      private_key: process.env.GOOGLE_PRIVATE_KEY,
-    },
-  });
-
-  const storage = new Storage({
-    projectId: process.env.GOOGLE_PROJECT_ID,
-    credentials: {
-      client_email: process.env.GOOGLE_EMAIL,
-      private_key: process.env.GOOGLE_PRIVATE_KEY,
-    },
-  });
 
   const session = await getSession({ req })
 
@@ -78,33 +79,8 @@ export default async function handler(req, res) {
     pdfData.on('data', (res) => {
       data += res;
     }).on('end', async () => {
-      await prisma.document.update({
-        where: {
-          title: fileName
-        },
-        data: {
-          draft: false,
-          content: {
-            createMany: {
-              data: 
-                JSON.parse(data).responses.map((response, index) => (
-                {                  
-                  page: index + 1,
-                  text: response.fullTextAnnotation.text,
-                }
-                )) 
-                     
-            }
-          }
-        },
-        select: {
-          content: true
-        }
-      })
+      await createDocumentDraftQuery(fileName, data)
     }); 
-
-    console.log(fileName)
-
 
     res.status(200).json({message: "success"})
 

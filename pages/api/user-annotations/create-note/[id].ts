@@ -1,29 +1,13 @@
 import prisma from "../../../../lib/prisma"
+import { createNote } from "../../../../lib/queries/annotation-queries"
 
 export default async function(req, res) {
 
     const userAnnotationId = req.query.id
 
-    const {
-        text,
-        dateOfPost,
-        page
-    } = req.body
-
     try {
-        const createNote = await prisma.userAnnotation.update({
-            where: { id: userAnnotationId },
-            data: {
-                notes: {
-                    create: {
-                        text,
-                        dateOfPost,
-                        page
-                    }
-                }
-            }
-        })
-        res.json(createNote)
+        const createdNote = await createNote(req.body, userAnnotationId)
+        res.json(createdNote)
     } catch(error) {
         throw error
     }

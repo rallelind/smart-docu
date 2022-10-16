@@ -1,40 +1,13 @@
 import prisma from "../../../../lib/prisma";
+import { createHighlightQuery } from "../../../../lib/queries/annotation-queries";
 
 export default async function(req, res) {
 
     const documentTitle = req.query.title
 
-    const { 
-        highlightStartOffset,
-        highlightEndOffset,
-        highlightTextContent,
-        highlightNodeHtml,
-        highlightTagName,
-        color,
-        top,
-        left
-    } = req.body
-    console.log(top)
-    console.log(left)
     try {
 
-        let userHighlightData = await prisma.document.update({
-            where: { title: documentTitle },
-            data: {
-                userAnnotation: {
-                    create: {
-                        highlightStartOffset,
-                        highlightEndOffset,
-                        highlightTextContent,
-                        highlightNodeHtml,
-                        highlightTagName,
-                        color,
-                        top,
-                        left
-                    }
-                }
-            }            
-        })
+        let userHighlightData = await createHighlightQuery(req.body, documentTitle)
 
         res.json(userHighlightData)
 
