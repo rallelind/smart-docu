@@ -1,4 +1,3 @@
-import prisma from "../../../../lib/prisma"
 import { createNote } from "../../../../lib/queries/annotation-queries"
 
 export default async function(req, res) {
