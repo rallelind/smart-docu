@@ -88,7 +88,7 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
   
           let element = document.createElement("span");
           element.style.backgroundColor = selectedColor
-          element.classList.add("select-none", "cursor-pointer")
+          element.classList.add("select-none", "cursor-pointer", "animate-pulse")
           element.onclick = highlightOnClick
 
           if (selection.rangeCount) {
@@ -113,6 +113,10 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
             left: leftPlacement,
           }
 
+          range.surroundContents(element);
+          selection.addRange(range)
+          selection.removeAllRanges()
+
           const createUserAnnotation = await fetch(`/api/user-annotations/highlight/${documentTitle}`, {
             headers: {
                 'Accept': 'application/json',
@@ -125,10 +129,8 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
           const data = await createUserAnnotation.json()
 
           if(createUserAnnotation.ok) {
-            range.surroundContents(element);
-            selection.addRange(range)
-            selection.removeAllRanges()
-          }
+            element.classList.remove("animate-pulse")
+        }
           return data
       }
 
