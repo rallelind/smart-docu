@@ -88,8 +88,7 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
   
           let element = document.createElement("span");
           element.style.backgroundColor = selectedColor
-          element.classList.add("select-none", "cursor-pointer", "animate-pulse")
-          element.onclick = highlightOnClick
+          element.classList.add("select-none", "animate-pulse")
 
           if (selection.rangeCount) {
             addUserAnnotation(selection, element)
@@ -97,7 +96,7 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
         }
       }
 
-      const addUserAnnotation = async (selection: Selection, element: Element) => {
+      const addUserAnnotation = async (selection: Selection, element: HTMLSpanElement) => {
         let range = selection.getRangeAt(0).cloneRange();
 
         const savedNode = range.startContainer;
@@ -129,7 +128,9 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
           const data = await createUserAnnotation.json()
 
           if(createUserAnnotation.ok) {
+            element.classList.add("cursor-pointer")
             element.classList.remove("animate-pulse")
+            element.onclick = highlightOnClick
         }
           return data
       }
