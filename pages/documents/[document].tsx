@@ -9,10 +9,9 @@ import ColorItem from "../../components/ColorItem";
 import Note from "../../components/Note";
 import { NextPageWithLayout } from "../_app"
 import { allDocumentTitlesQuery, currentDocumentQuery } from "../../lib/queries/document-queries";
+import { useGetDocumentNotes, useGetDocumentHighlights } from "../../lib/custom-hooks/react-queries";
 
-import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
-import { useQuery } from "react-query"
 import { useRouter } from "next/router";
 
 export const getStaticProps = async ({ params }) => {
@@ -69,30 +68,20 @@ const Documents: NextPageWithLayout<Document> = ({ generatedDocument }) => {
           setCommentingActive(true)
         }
     }
-
-    const fetchDocumentHighligths = async () => {
-      const res = await fetch(`/api/user-annotations/document-highlights/${generatedDocument.title}`)
-      return res.json()
-    }
-
-    const fetchNotes = async () => {
-      const res = await fetch(`/api/user-annotations/notes/${generatedDocument.title}`)
-      return res.json()    
-    }
   
     const { 
       data: highlights, 
       isSuccess: highlightLoadSuccess, 
       isLoading: highlightLoading, 
       refetch: refetchHighlights 
-    } = useQuery("document-highlights", fetchDocumentHighligths)
+    } = useGetDocumentHighlights(generatedDocument.title)
 
     const { 
       data: notes, 
       isSuccess: notesSuccessLoad, 
       isLoading: notesLoading, 
       refetch: refetchNotes 
-    } = useQuery("document-notes", fetchNotes)
+    } = useGetDocumentNotes(generatedDocument.title)
 
     const findNode = (annotation): any | ChildNode => {
       let documentContent = document.getElementById('document');

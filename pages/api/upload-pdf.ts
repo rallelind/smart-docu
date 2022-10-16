@@ -47,10 +47,9 @@ export default async function handler(req, res) {
     const [response] = await file.generateSignedPostPolicyV4(options);
 
     const email = session.user.email;
-    const title = req.query.title;
+    const title = req.query.file;
     const pdfLink = `${response.url}${response.fields.key}`;
 
-    if(response) {
       try {
         await generateDocumentQuery(email, title, pdfLink)
         res.status(200).json(response);
@@ -62,7 +61,4 @@ export default async function handler(req, res) {
         }
         throw error
       }
-    } else {
-      res.status(500).json({ error: "error uploading pdf" })
-    }
 }

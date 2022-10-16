@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { useQuery } from "react-query";
+import { useGetDocumentDrafts, useGetDocumentsList } from "../lib/custom-hooks/react-queries";
 import { BiCheckbox, BiCheckboxChecked } from "react-icons/bi"
 import { ToastError, ToastLoader, ToastSuccess } from "./toasters/Toasters"
 
@@ -9,21 +9,15 @@ const UploadFile: React.FC = () => {
     const [pickedFile, setPickedFile] = useState("")
     const [toaster, setToaster] = useState(<></>)
 
-    const fetchDrafts = async () => {
-        const res = await fetch(`/api/documents/drafts`)
-        return res.json()
-    }
-
     const { 
         data, 
         isSuccess,
         isLoading, 
-        refetch,
-        isRefetching
-      } = useQuery("document-drafts", fetchDrafts)
+        refetch: refetchDrafts,
+      } = useGetDocumentDrafts()
 
-      console.log(data)
-
+    const { refetch: refetchDocumentList } = useGetDocumentsList()
+    
     const changeHandler = async (event) => {
         
         setToaster(<ToastLoader text="Uploading file" onClose={() => setToaster(<></>)} />)
@@ -37,10 +31,6 @@ const UploadFile: React.FC = () => {
         Object.entries({ ...fields, file }).forEach(([key, value]) => {
           formData.append(key, value as string);
         });
-
-        console.log(url)
-
-        console.log(fields)
         
             const upload = await fetch(url, {
             method: 'POST',
@@ -52,7 +42,7 @@ const UploadFile: React.FC = () => {
             }
             
             if (upload.ok) {
-                refetch()
+                refetchDrafts()
                 setToaster(<ToastSuccess text="Successfully uploaded file" onClose={() => setToaster(<></>)} />)
             } 
         
@@ -98,7 +88,8 @@ const UploadFile: React.FC = () => {
         })
 
         if (generateDocument.ok) {
-            refetch()
+            refetchDrafts()
+            refetchDocumentList()
             setToaster(<ToastSuccess text="Successfully generated document" onClose={() => setToaster(<></>)} />)
         }
 

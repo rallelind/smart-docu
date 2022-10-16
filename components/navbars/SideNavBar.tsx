@@ -3,7 +3,7 @@ import { useState } from "react"
 import { RiArrowDownSLine, RiArrowUpSLine, RiPagesLine } from "react-icons/ri"
 import { useRouter } from "next/router"
 import { HiOutlineDocument, HiOutlineDocumentDuplicate, HiOutlineCloudUpload } from "react-icons/hi"
-import { useQuery } from "react-query"
+import { useGetDocumentsList } from "../../lib/custom-hooks/react-queries"
 
 const SideNavBar = () => {
 
@@ -80,7 +80,7 @@ const SideNavBar = () => {
         return res.json()
       }
     
-    const { data, isSuccess } = useQuery("documents-user-list", fetchDocumentList)
+    const { data, isSuccess } = useGetDocumentsList()
 
     return (
         <aside className="overflow-y-scroll h-full w-64 rounded fixed m-5">
