@@ -88,12 +88,24 @@ const UploadFile: React.FC = () => {
         })
 
         if (generateDocument.ok) {
+            revalidateDocumentPath(fileName)
+        }
+
+        if (!generateDocument.ok) {
+            setToaster(<ToastError text="There was an error generating document" onClose={() => setToaster(<></>)} />)
+        }
+    }
+
+    const revalidateDocumentPath = async (title: string) => {
+        const revalidateResponse = await fetch(`/api/revalidate?secret=thisisthetokentorevalidatethessr&title=${title}`)
+    
+        if(revalidateResponse.ok) {
             await refetchDrafts()
             await refetchDocumentList()
             setToaster(<ToastSuccess text="Successfully generated document" onClose={() => setToaster(<></>)} />)
         }
 
-        if (!generateDocument.ok) {
+        if (!revalidateResponse.ok) {
             setToaster(<ToastError text="There was an error generating document" onClose={() => setToaster(<></>)} />)
         }
     }

@@ -17,7 +17,7 @@ import { useRouter } from "next/router";
 export const getStaticProps = async ({ params }) => {
   const generatedDocument = await currentDocumentQuery(String(params?.document))
 
-  return { props: { generatedDocument }, revalidate: 5 };
+  return { props: { generatedDocument }, revalidate: 10 };
 };
 
 export const getStaticPaths = async ({ req }) => {
@@ -33,7 +33,7 @@ export const getStaticPaths = async ({ req }) => {
 
   return {
     paths,
-    fallback: false,
+    fallback: 'blocking',
   };
   
 };
