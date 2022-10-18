@@ -34,8 +34,9 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
 
     const { selectedColor, selectionOptionsOpen, documentTitle, topPlacement, leftPlacement } = floatingMenuData
 
+
     useEffect(() => {
-        const documentElement = document.querySelector("#document");
+        const documentElement = document.getElementById("document");
 
         const mouseUp = () => {
             if(document.getSelection) {                
@@ -44,7 +45,7 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
       
               if(text !== "") {
                 let rect = selection.getRangeAt(0).getBoundingClientRect();
-                let top = rect.top + window.scrollY
+                let top = (rect.top + window.scrollY)
                 let left = (rect.left - 100/2) + (rect.width / 2)
                 floatingOptionPlacement({top, left})
                 openSelectionMenu(true)
@@ -150,18 +151,32 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
         return null
     }
 
+    const selectionDimensions = document.getSelection().getRangeAt(0).getBoundingClientRect()
+
+    const topHit = colorSelectionActive ? topPlacement < 150 : topPlacement < 50;
+
+    const floatingMenuPlacementStyle = {
+        left: leftPlacement,
+        top: topHit ? topPlacement + selectionDimensions.height + 13 : topPlacement - 50
+    }
+
+    const colorSelectionPlacementStyle = {
+        left: leftPlacement,
+        top: topHit ? topPlacement + selectionDimensions.height + 50 : topPlacement - 150
+    }
+
     return (
         <div ref={floatingMenuRef}>
             {colorSelectionActive && (
-                <div style={{ top: topPlacement - 150, left: leftPlacement }} className="absolute">
-                    <div style={{ top: topPlacement, left: leftPlacement }} className="bg-white border-black z-0 border-2 mb-1 grid gap-1 grid-cols-3 justify-items-center p-2 w-[100px] rounded-lg">
+                <div style={colorSelectionPlacementStyle} className="absolute">
+                    <div className="bg-white border-black z-0 border-2 mb-1 grid gap-1 grid-cols-3 justify-items-center p-2 w-[100px] rounded-lg">
                         {children}
                     </div>
                 </div>
             )}
             <div
                 className="absolute"
-                style={{ top: topPlacement - 50, left: leftPlacement }}
+                style={floatingMenuPlacementStyle}
             >
                 <span 
                     className={`flex justify-evenly bg-gray-800 w-[100px] p-2 rounded-lg z-10`}
@@ -177,7 +192,7 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
                     </div>
                 </span>
                 <div className="flex justify-center z-0">
-                    <span className="bg-gray-800 w-7 h-7 rotate-45 bottom-0 absolute z-0"></span>
+                    <span className={`bg-gray-800 w-7 h-7 rotate-45 ${topHit ? "top-0" : "bottom-0"} absolute z-0`}></span>
                 </div>
             </div>
         </div>
