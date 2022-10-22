@@ -11,7 +11,8 @@ interface FloatingTextOptionsMenu {
         selectionOptionsOpen: boolean;
         documentTitle: string;
         topPlacement: number,
-        leftPlacement: number
+        leftPlacement: number, 
+        startOfAnnotation: number,
     }
     children: ReactNode;
     openSelectionMenu: (value: boolean) => void;
@@ -29,29 +30,31 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
 
     const [colorSelectionActive, setColorSelectionActive] = useState(false)
 
-
     const floatingMenuRef = useRef()
 
-    const { selectedColor, selectionOptionsOpen, documentTitle, topPlacement, leftPlacement } = floatingMenuData
+    const { selectedColor, selectionOptionsOpen, documentTitle, topPlacement, leftPlacement, startOfAnnotation } = floatingMenuData
 
+    const mouseUp = () => {
+        if(document.getSelection) {                
+          let selection = document.getSelection()
+          let text = selection.toString()
+  
+          if(text !== "") {
+
+            console.log(colorSelectionActive)
+
+            let rect = selection.getRangeAt(0).getBoundingClientRect();
+            let start = rect.y
+            let top = rect.top + rect.height + window.scrollY
+            let left = (rect.left - 100/2) + (rect.width / 2)
+            floatingOptionPlacement({top, left, start})
+            openSelectionMenu(true)
+          }
+        }
+      }
 
     useEffect(() => {
         const documentElement = document.getElementById("document");
-
-        const mouseUp = () => {
-            if(document.getSelection) {                
-              let selection = document.getSelection()
-              let text = selection.toString()
-      
-              if(text !== "") {
-                let rect = selection.getRangeAt(0).getBoundingClientRect();
-                let top = (rect.top + rect.height + window.scrollY)
-                let left = (rect.left - 100/2) + (rect.width / 2)
-                floatingOptionPlacement({top, left})
-                openSelectionMenu(true)
-              }
-            }
-          }
 
         documentElement.addEventListener("mouseup", mouseUp)
 
@@ -111,6 +114,7 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
             color: selectedColor,
             top: topPlacement, 
             left: leftPlacement,
+            start: startOfAnnotation,
           }
 
           range.surroundContents(element);
@@ -151,7 +155,7 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
         return null
     }
 
-    const topHit = colorSelectionActive ? topPlacement < 150 : topPlacement < 50;
+    const topHit = colorSelectionActive ? startOfAnnotation < 150 : startOfAnnotation < 50;
 
     const floatingMenuPlacementStyle = {
         left: leftPlacement,

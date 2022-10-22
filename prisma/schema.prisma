@@ -87,6 +87,7 @@ model UserAnnotation {
   color                String
   top                  Float
   left                 Float
+  start                Float
   notes                Note[]
 }
 

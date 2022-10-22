@@ -40,7 +40,8 @@ export const createHighlightQuery = async (highlightData: HighlightData, documen
         highlightTagName,
         color,
         top,
-        left
+        left,
+        start,
     } = highlightData;
 
     return await prisma.document.update({
@@ -55,7 +56,8 @@ export const createHighlightQuery = async (highlightData: HighlightData, documen
                     highlightTagName,
                     color,
                     top,
-                    left
+                    left,
+                    start,
                 }
             }
         }            

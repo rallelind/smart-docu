@@ -19,6 +19,7 @@ export interface HighlightData {
     color: string;
     top: number;
     left: number;
+    start: number;
 }
 
 

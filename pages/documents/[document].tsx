@@ -54,9 +54,10 @@ const Documents: NextPageWithLayout<Document> = ({ generatedDocument }) => {
   const [commentingActive, setCommentingActive] = useState<boolean>(false)
   const [selectedColor, setSelectedColor] = useState<string>("#fde047");
   const [selectionOptionsOpen, setSelectionOptionsOpen] = useState<boolean>(false)
-  const [floatingMenuPlacement, setFloatingMenuPlacement] = useState<{ top: number, left: number }>({
+  const [floatingMenuPlacement, setFloatingMenuPlacement] = useState<{ top: number, left: number, start: number }>({
     top: 0,
     left: 0,
+    start: 0,
   })
   const [activeAnnotationId, setActiveAnnotationId] = useState<string>()
 
@@ -98,10 +99,10 @@ const Documents: NextPageWithLayout<Document> = ({ generatedDocument }) => {
     }
 
     const highlightOnClick = (annotation) => {
-      const { top, left, color, id } = annotation
+      const { top, left, start, color, id } = annotation
 
       setSelectionOptionsOpen(!selectionOptionsOpen)
-      setFloatingMenuPlacement({top, left })
+      setFloatingMenuPlacement({top, left, start})
       setSelectedColor(color)
       setActiveAnnotationId(id)
     }
@@ -152,14 +153,15 @@ const Documents: NextPageWithLayout<Document> = ({ generatedDocument }) => {
       setSelectedColor(color)
     }
 
-    const { top, left } = floatingMenuPlacement
+    const { top, left, start } = floatingMenuPlacement
 
     const floatingMenuData = {
       selectedColor,
       selectionOptionsOpen,
       documentTitle: generatedDocument.title,
       topPlacement: top,
-      leftPlacement: left
+      leftPlacement: left,
+      startOfAnnotation: start, 
     }
 
   return (
