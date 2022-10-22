@@ -54,6 +54,7 @@ const Documents: NextPageWithLayout<Document> = ({ generatedDocument }) => {
   const [commentingActive, setCommentingActive] = useState<boolean>(false)
   const [selectedColor, setSelectedColor] = useState<string>("#fde047");
   const [selectionOptionsOpen, setSelectionOptionsOpen] = useState<boolean>(false)
+  const [colorSelectionActive, setColorSelectionActive] = useState<boolean>(false)
   const [floatingMenuPlacement, setFloatingMenuPlacement] = useState<{ top: number, left: number, start: number }>({
     top: 0,
     left: 0,
@@ -162,6 +163,7 @@ const Documents: NextPageWithLayout<Document> = ({ generatedDocument }) => {
       topPlacement: top,
       leftPlacement: left,
       startOfAnnotation: start, 
+      colorSelectionActive,
     }
 
   return (
@@ -171,19 +173,21 @@ const Documents: NextPageWithLayout<Document> = ({ generatedDocument }) => {
           floatingOptionPlacement={setFloatingMenuPlacement}
           openSelectionMenu={setSelectionOptionsOpen}
           generatedDocument={generatedDocument.content}
+          colorSelectionActive={colorSelectionActive}
         >
             <FloatingTextOptionsMenu
                 commentingActive={activeCommenting}
                 openSelectionMenu={setSelectionOptionsOpen}
+                openColorSelection={setColorSelectionActive}
                 floatingMenuData={floatingMenuData}
             >
-                {colorOptions.map((colorOption, index) => (
-                  <ColorItem 
-                      key={index}
-                      onMouseDown={(event) => setColor(event, colorOption)} 
-                      color={colorOption} 
-                    />
-                ))}
+                  {colorOptions.map((colorOption, index) => (
+                    <ColorItem 
+                        key={index}
+                        onMouseDown={(event) => setColor(event, colorOption)} 
+                        color={colorOption} 
+                      />
+                  ))}
             </FloatingTextOptionsMenu>
         </Document>
       </main>

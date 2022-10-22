@@ -11,9 +11,16 @@ interface GeneratedDocument {
     children: React.ReactNode;
     floatingOptionPlacement: any;
     openSelectionMenu: (value: boolean) => void;
+    colorSelectionActive: boolean;
 }
 
-const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children, floatingOptionPlacement, openSelectionMenu }) => {
+const Document: React.FC<GeneratedDocument> = ({ 
+  generatedDocument, 
+  children, 
+  floatingOptionPlacement, 
+  openSelectionMenu, 
+  colorSelectionActive 
+}) => {
 
     const router = useRouter()
 
@@ -64,7 +71,8 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children, fl
 
           let rect = selection.getRangeAt(0).getBoundingClientRect();
           let start = rect.y
-          let top = rect.top + rect.height + window.scrollY
+          const topHit = colorSelectionActive ? start < 150 : start < 50;
+          let top = topHit ? rect.top + rect.height + window.scrollY : rect.top + window.scrollY
           let left = (rect.left - 100/2) + (rect.width / 2)
           floatingOptionPlacement({top, left, start})
           openSelectionMenu(true)

@@ -13,24 +13,25 @@ interface FloatingTextOptionsMenu {
         topPlacement: number,
         leftPlacement: number, 
         startOfAnnotation: number,
+        colorSelectionActive: boolean
     }
     children: ReactNode;
     openSelectionMenu: (value: boolean) => void;
     commentingActive: () => void;
+    openColorSelection: (value: boolean) => void;
 }
 
 const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ 
     commentingActive, 
     openSelectionMenu,
+    openColorSelection,
     floatingMenuData,
     children 
 }) => {
 
-    const [colorSelectionActive, setColorSelectionActive] = useState(false)
-
     const floatingMenuRef = useRef()
 
-    const { selectedColor, selectionOptionsOpen, documentTitle, topPlacement, leftPlacement, startOfAnnotation } = floatingMenuData
+    const { selectedColor, selectionOptionsOpen, documentTitle, topPlacement, leftPlacement, startOfAnnotation, colorSelectionActive } = floatingMenuData
 
     useEffect(() => {
         if(!selectionOptionsOpen) {
@@ -42,13 +43,13 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
     useClickOutside(floatingMenuRef, () => {
         if(selectionOptionsOpen) {
             openSelectionMenu(false)
-            setColorSelectionActive(false)
+            openColorSelection(false)
         } 
     })
 
     const colorPalleteOnclick = (event) => {
         event.preventDefault()
-        setColorSelectionActive(!colorSelectionActive)
+        openColorSelection(!colorSelectionActive)
     }
 
     const highlightOnClick = () => {
@@ -128,12 +129,12 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
 
     const floatingMenuPlacementStyle = {
         left: leftPlacement,
-        top: topHit ? topPlacement + 13 : topPlacement - 70
+        top: topHit ? topPlacement + 13 : topPlacement - 50
     }
 
     const colorSelectionPlacementStyle = {
         left: leftPlacement,
-        top: topHit ? topPlacement + 50 : topPlacement - 170
+        top: topHit ? topPlacement + 50 : topPlacement - 150
     }
 
     return (
