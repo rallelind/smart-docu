@@ -9,9 +9,11 @@ interface GeneratedDocument {
         text: string,
     }];
     children: React.ReactNode;
+    floatingOptionPlacement: any;
+    openSelectionMenu: (value: boolean) => void;
 }
 
-const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) => {
+const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children, floatingOptionPlacement, openSelectionMenu }) => {
 
     const router = useRouter()
 
@@ -52,6 +54,23 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) 
         { shallow: true }
       )
     }
+
+    const mouseUp = () => {
+      if(document.getSelection) {                
+        let selection = document.getSelection()
+        let text = selection.toString()
+
+        if(text !== "") {
+
+          let rect = selection.getRangeAt(0).getBoundingClientRect();
+          let start = rect.y
+          let top = rect.top + rect.height + window.scrollY
+          let left = (rect.left - 100/2) + (rect.width / 2)
+          floatingOptionPlacement({top, left, start})
+          openSelectionMenu(true)
+        }
+      }
+    }
     
   
     const lastPage = generatedDocument[generatedDocument.length-1].page;
@@ -66,6 +85,7 @@ const Document: React.FC<GeneratedDocument> = ({ generatedDocument, children }) 
                     key={page}
                     id="document"
                     className='text-center leading-8 text-lg'
+                    onMouseUp={mouseUp}
                   >
                     {text.text}
                   </p>

@@ -167,11 +167,14 @@ const Documents: NextPageWithLayout<Document> = ({ generatedDocument }) => {
   return (
     <>
       <main className="grow">
-        <Document generatedDocument={generatedDocument.content}>
+        <Document 
+          floatingOptionPlacement={setFloatingMenuPlacement}
+          openSelectionMenu={setSelectionOptionsOpen}
+          generatedDocument={generatedDocument.content}
+        >
             <FloatingTextOptionsMenu
                 commentingActive={activeCommenting}
                 openSelectionMenu={setSelectionOptionsOpen}
-                floatingOptionPlacement={setFloatingMenuPlacement}
                 floatingMenuData={floatingMenuData}
             >
                 {colorOptions.map((colorOption, index) => (

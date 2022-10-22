@@ -17,13 +17,11 @@ interface FloatingTextOptionsMenu {
     children: ReactNode;
     openSelectionMenu: (value: boolean) => void;
     commentingActive: () => void;
-    floatingOptionPlacement: any;
 }
 
 const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({ 
     commentingActive, 
     openSelectionMenu,
-    floatingOptionPlacement,
     floatingMenuData,
     children 
 }) => {
@@ -33,35 +31,6 @@ const FloatingTextOptionsMenu: React.FC<FloatingTextOptionsMenu> = ({
     const floatingMenuRef = useRef()
 
     const { selectedColor, selectionOptionsOpen, documentTitle, topPlacement, leftPlacement, startOfAnnotation } = floatingMenuData
-
-    const mouseUp = () => {
-        if(document.getSelection) {                
-          let selection = document.getSelection()
-          let text = selection.toString()
-  
-          if(text !== "") {
-
-            console.log(colorSelectionActive)
-
-            let rect = selection.getRangeAt(0).getBoundingClientRect();
-            let start = rect.y
-            let top = rect.top + rect.height + window.scrollY
-            let left = (rect.left - 100/2) + (rect.width / 2)
-            floatingOptionPlacement({top, left, start})
-            openSelectionMenu(true)
-          }
-        }
-      }
-
-    useEffect(() => {
-        const documentElement = document.getElementById("document");
-
-        documentElement.addEventListener("mouseup", mouseUp)
-
-        return () => {
-            documentElement.removeEventListener("mouseup", mouseUp)
-        }
-    }, [])
 
     useEffect(() => {
         if(!selectionOptionsOpen) {
