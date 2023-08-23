@@ -73,7 +73,7 @@ const SideNavBar = () => {
     const { data, isSuccess } = useGetDocumentsList()
 
     return (
-        <aside className="overflow-y-scroll h-full w-64 rounded fixed m-5">
+        <aside className="overflow-y-auto h-full w-64 rounded fixed m-5">
             <div className="overflow-y-auto py-4 px-3 bg-gray-50 rounded-lg dark:bg-gray-800">
                 <ul>
                     <li onClick={() => routerRedirect("/documents/upload-document")}>
